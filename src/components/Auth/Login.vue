@@ -21,7 +21,7 @@
     </div>
 
 </template>
-<script setup>
+<script setup lang="ts">
 import Input from '../UI/Input.vue';
 import Button from '../UI/Button.vue'
 import emailIcon from '../../assets/auth/email.svg'

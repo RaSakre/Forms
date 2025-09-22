@@ -1,16 +1,16 @@
 <template>
-    <button  class="button" :class="[variant && `button--${variant}`]">{{ text }}</button>
+    <button  class="button" :class="[variant && `button--${variant}`]">
+        <img class="btn-img" :src="img" v-if="img" alt="">
+        {{ text }}
+        </button>
 </template>
-<script setup>
-    const props = defineProps({
-        text: {
-            type: String,
-            required: true
-        },
-        variant: {
-            type: String,
-        }
-    })
+<script setup lang="ts">
+interface Props {
+    text: string,
+    variant?: string,
+    img?: string,
+}
+const props = defineProps<Props>()
 </script>
 <style scoped>
     .button {
@@ -33,5 +33,8 @@
     .button--dark {
         background-color: #171718;
         color: #fff;
+    }
+    .btn-img {
+        width: 20px;
     }
 </style>
