@@ -5,7 +5,7 @@ import Login from './components/Auth/Login.vue';
 
 <template>
 <Layout/>
-
+<!-- <Login/> -->
 </template>
 
 <style scoped>

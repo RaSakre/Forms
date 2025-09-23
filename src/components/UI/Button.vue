@@ -34,6 +34,10 @@ const props = defineProps<Props>()
         background-color: #171718;
         color: #fff;
     }
+    .button:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
     .btn-img {
         width: 20px;
     }

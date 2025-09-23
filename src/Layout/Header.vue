@@ -2,12 +2,14 @@
     <header class="header">
         <div class="container">
             <div class="header__content">
-                <h1 class="header__logo">Forms</h1>
+                <router-link to="/">
+                    <h1 class="header__logo">Forms</h1>
+                </router-link>
                 <div class="header__right">
                 <nav>
                     <ul class="header__menu-list">
-                        <li>Главная</li>
-                        <li>Новая форма</li>
+                        <li><router-link to="/" >Главная</router-link></li>
+                        <li><router-link to="/constructor">Новая форма</router-link></li>
                         <li>Профиль</li>
                     </ul>
                 </nav>
@@ -65,6 +67,10 @@
 .header__menu-list {
     display: flex;
     gap: 25px;
+}
+
+.header__menu-list a {
+    color: white;
 }
 
 .theme {

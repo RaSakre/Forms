@@ -20,7 +20,7 @@
                             </div>
                         </div>
                         <h2 class="constructor-title">Элементы формы</h2>
-                        <form action="" class="constructor-form">
+                        <form @submit.prevent="addForm" action="" class="constructor-form">
                             <button @click="addQuestion($event, {
                                 type: 'text',
                                 isOneRow: true,
@@ -51,6 +51,7 @@
                                 isMultiSelect: false,
                                 image: singleSelect,
                                 options: [''],
+                                isRequired: false,
                             })
                                 " class="constructor-button">
                                 <img src="../assets/constructor-check.svg" alt="">
@@ -63,6 +64,7 @@
                                 isMultiSelect: true,
                                 image: multiSelect,
                                 options: [''],
+                                isRequired: false,
                             })
                                 " class="constructor-button">
                                 <img src="../assets/constructor-plus.svg" alt="">
@@ -122,7 +124,10 @@
                                     <Input v-for="(item, index) in question.options" :key="question.id"
                                         :image="question.isMultiSelect ? selectSquare : selectCircle" :type="'text'"
                                         v-model="question.options[index]" :placeholder="`Вариант ${index + 1}`"
-                                        :variant="'gray'" />
+                                        :style="[question.options.length > 1 ? {'width': '95%' } : {'width': '100%'}]"
+                                        :variant="'gray'" >
+                                        <img class="deleteSelect" @click="deleteSelectOption(question.id, index)" v-if="question.options.length > 1"  src="@/assets/selects-delete.svg" alt="">
+                                    </Input>
                                     <div class="addBtn">
                                         <button @click="question.options.push('')">Добавить</button>
                                     </div>
@@ -131,8 +136,16 @@
                                             <img :src="question.image" alt="">
                                             <p>{{ question.isMultiSelect ? 'Список множественного выбора' : 'Список  одиночного выбора' }}</p>
                                         </div>
-                                        <div @click="deleteQuestion(question.id)" class="form-item-lowerright">
-                                            <img style="cursor: pointer;" src="../assets/delete.svg" alt="">
+                                        
+                                        <div class="form-item-lowerright">
+                                            <label class="modern-toggle">
+                                                <input type="checkbox" :checked="question.isRequired"
+                                                    @change="toggleQuestion(question.id)" />
+                                                <span class="modern-slider">
+                                                    <span class="toggle-knob"></span>
+                                                </span>
+                                            </label>
+                                            <img @click="deleteQuestion(question.id)" style="cursor: pointer;" src="../assets/delete.svg" alt="">
                                         </div>
                                     </div>
                                 </template>
@@ -142,12 +155,12 @@
                 </div>
             </div>
         </div>
+        <router-link to="/form">LINK</router-link>
     </div>
 </template>
 <script setup lang="ts">
 import Button from '@/components/UI/Button.vue';
 import Input from '@/components/UI/Input.vue';
-import Tooltip from '@/components/UI/Tooltip.vue';
 
 import saveIcon from '@/assets/constructor-save.svg';
 import lines from '@/assets/constructor-lines.svg';
@@ -158,35 +171,13 @@ import multiSelect from '@/assets/constructor-plus.svg'
 import selectSquare from '@/assets/square-select.svg'
 
 import { v4 as uuidv4 } from 'uuid';
-import { ref, TransitionGroup, watch } from 'vue';
+import { ref, TransitionGroup } from 'vue';
 
-type Form = {
-    name: string;
-    description: string;
-    questions: Array<QuestionText | QuestionSelect>;
-}
+import type { Form, QuestionSelect, QuestionText} from '@/types/formTypes';
+import { useFormsStore } from '@/store/formsTemplates';
 
-type QuestionType = 'text' | 'select';
+const formsStore = useFormsStore()
 
-type QuestionBase = {
-    id: string;
-    type: QuestionType;
-    question: string;
-    image: string;
-}
-
-type QuestionText = QuestionBase & {
-    type: 'text';
-    isOneRow: boolean;
-    isRequired?: boolean;
-}
-
-type QuestionSelect = QuestionBase & {
-    type: 'select';
-    options: string[];
-    isRequired?: boolean;
-    isMultiSelect: boolean;
-}
 
 const toggleQuestion = (questionId: string) => {
     const question = state.value.questions.find(q => q.id === questionId)
@@ -195,13 +186,17 @@ const toggleQuestion = (questionId: string) => {
     }
 }
 
-const isActive = ref<boolean>(false);
 
 const state = ref<Form>({
+    id: uuidv4(),
     name: '',
     description: '',
     questions: []
 })
+
+const addForm = (): void => {
+    formsStore.addForm(state.value)
+}
 
 const isNameWritten = ref<boolean>(false);
 const isDescriptionWritten = ref<boolean>(false);
@@ -237,6 +232,16 @@ const addQuestion = (event: Event, question: QuestionText | QuestionSelect): voi
 const deleteQuestion = (id: string): void => {
     state.value.questions = state.value.questions.filter((question) => question.id !== id)
 }
+
+const deleteSelectOption = (id:string, index:number): void => {
+    const question = state.value.questions.find(q => q.id === id)
+    if (question && question.type === 'select') {
+        question.options.splice(index, 1)
+    }
+}
+
+
+
 
 
 
@@ -470,11 +475,11 @@ const deleteQuestion = (id: string): void => {
     background-color: rgb(128 128 128 / 40%);
 }
 
-.toggle-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px;
+.deleteSelect {
+    width: 25px;
+    position: absolute;
+    top: 6px;
+    right: -35px;
 }
 
 .modern-toggle {

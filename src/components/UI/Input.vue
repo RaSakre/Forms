@@ -1,8 +1,17 @@
 <template>
     <div style="position: relative; border-radius: 5px;">
-        <input ref="passwordInput" :type="type" :placeholder="placeholder" class="input"
-            :style="[image ? '' : 'padding: 10px']" :class="[variant && `input-${variant}`]" :value="modelValue"
-            @input="$emit('update:modelValue', $event.target.value)" @blur="$emit('blur')" />
+        <input  
+            ref="passwordInput" 
+            :type="type" 
+            :placeholder="placeholder" 
+            :name="name"
+            class="input"
+            :style="[image ? '' : 'padding: 10px']" 
+            :class="[variant && `input-${variant}`]" 
+            @input="$emit('update:modelValue', $event.target.value)" 
+            @blur="$emit('blur')" 
+        />
+        <slot/>
         <div class="input-img">
             <img :src="image" alt="">
         </div>
@@ -12,6 +21,7 @@
     </div>
 </template>
 <script setup>
+// :value="modelValue"
 import { ref } from 'vue';
 const props = defineProps({
     modelValue: {
@@ -33,6 +43,10 @@ const props = defineProps({
         default: '',
     },
     image: {
+        type: String,
+        required: false,
+    },
+    name: {
         type: String,
         required: false,
     },
@@ -72,7 +86,7 @@ const togglePasswordVisibility = () => {
 .input {
     width: 100%;
     padding: 10px 40px;
-    min-height: 30px;
+    /* min-height: 30px; */
     background-color: #fff;
     border-radius: 10px;
     transition: all 0.3s ease;
