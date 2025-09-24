@@ -5,10 +5,12 @@
             <Input class="search" :variant="'gray'" :type="'text'" :placeholder="'Найти'">
             <img class="search-icon" src="../assets/search.svg" alt="">
             </Input>
-            <ul class="forms-list">
-                <li class="form-item">
-                    <h3 class="form-title">{{formName?.name }}</h3>
-                    <p class="form-description">{{formDescription?.description}}</p>
+            <ul v-if="formsStore.forms.length" class="forms-list">
+                <li v-for="form in formsStore.forms" :key="form.id" class="form-item">
+                    <router-link class="form-link" :to='`/form/${form.id}`'>
+                    <h3 class="form-title">{{ form.name}}</h3>
+                    <p class="form-description">{{form.description}}</p>
+                    </router-link>
                     <div class="form-buttons">
                         <button class="form-button">
                             <img :src="msgs" alt="">
@@ -16,12 +18,13 @@
                         <button  class="form-button">
                             <img :src="pen" alt="">
                         </button>
-                        <button  class="form-button">
+                        <button @click="form.id ? formsStore.deleteForm(form.id) : ''" class="form-button">
                             <img :src="thrash" alt="">
                         </button>
                     </div>
                 </li>
             </ul>
+            <p style="font-size: 20px;" v-else>Формы не найдены</p>
         </div>
     </div>
 </template>
@@ -31,18 +34,9 @@ import msgs from '@/assets/index-msgs.svg'
 import pen from '@/assets/index-pen.svg'
 import thrash from '@/assets/index-thrash.svg'
 
-import { useFormsStore } from '@/store/formsTemplates';
-import { computed } from 'vue';
+import { useFormsStore } from '@/store/forms';
 
 const formsStore = useFormsStore()
-
-const formName = computed(() => {
-    return formsStore.forms.find(question => question.name)
-})
-
-const formDescription = computed(() => {
-    return formsStore.forms.find(question => question.description)
-})
 
 
 
@@ -53,6 +47,10 @@ const formDescription = computed(() => {
     width: 20px;
     right: 10px;
     top: 8px;
+}
+
+.form-link {
+    color: white;
 }
 
 .my-forms-title {

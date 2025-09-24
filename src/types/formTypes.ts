@@ -1,5 +1,5 @@
 export interface Form  {
-    id: string;
+    id?: string;
     name: string;
     description: string;
     questions: Array<QuestionText | QuestionSelect>;
@@ -13,13 +13,12 @@ export interface QuestionBase  {
     question: string;
     isRequired: boolean;
     image: string;
-    answer?: string;
+    answer?: string[] | string;
 }
 
 export interface QuestionText extends QuestionBase {
     type: 'text';
     isOneRow: boolean;
-
 }
 
 export interface QuestionSelect extends QuestionBase  {

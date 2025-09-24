@@ -8,7 +8,7 @@
             class="input"
             :style="[image ? '' : 'padding: 10px']" 
             :class="[variant && `input-${variant}`]" 
-            @input="$emit('update:modelValue', $event.target.value)" 
+            @input="$emit('update:modelValue', $event.target.value)"
             @blur="$emit('blur')" 
         />
         <slot/>
@@ -50,9 +50,10 @@ const props = defineProps({
         type: String,
         required: false,
     },
+    value: [String, Number, Boolean],
     // инпут поиска, картинка с лупой только в конце, передать пропс
 });
-const emit = defineEmits(['update:modelValue', 'blur'])
+const emit = defineEmits(['update:modelValue', 'blur', 'change'])
 const passwordInput = ref(null)
 import passwordEyeIcon from '../../assets/auth/passwordEyeShow.svg'
 import passwordEyeIconHide from '../../assets/auth/passwordEyeClose.svg'

@@ -13,25 +13,25 @@
                     </span>
                     
                     <template v-if="question.type === 'text' && question.isOneRow">
-                        <Input :variant="'gray'" type="text" />
+                        <Input v-model="answers.inputAnswer" :variant="'gray'" type="text" />
                     </template>
                     
                     <template  v-else-if="question.type === 'text' && !question.isOneRow">
-                        <textarea  class="form-textarea" rows="3"></textarea>
+                        <textarea v-model="answers.textareaAnswer" class="form-textarea" rows="3"></textarea>
                     </template>
                     
                     <template v-else-if="question.type === 'select' && !question.isMultiSelect">
                         <div class="options-wrapper">
-                        <div v-for="option in question.options" :key="option" class="option-wrapper">
-                            <Input :type="'radio'" :name="`question-${index}`"  />
+                        <div v-for="option in question.options" :key="question.id" class="option-wrapper">
+                            <Input v-model="answers.radioAnswer" :value="option" :type="'radio'" :name="`question-${index}`"  />
                             <span>{{ option }}</span>
                         </div>
                         </div>
                     </template>
                     
                     <template v-else-if="question.type === 'select' && question.isMultiSelect">
-                        <div v-for="option in question.options" :key="option" class="option-wrapper">
-                            <Input :type="'checkbox'"  :value="option" />
+                        <div v-for="option in question.options" :key="question.id" class="option-wrapper">
+                            <Input  :type="'checkbox'"  :value="option" />
                             <span>{{ option }}</span>
                         </div>
                     </template>
@@ -47,19 +47,54 @@
 
 <script setup lang="ts">
 // нужна переменная которая будет отслеживать заполнил ли я инпуты у которых поле isRequired = true
-import { useFormsStore } from '@/store/formsTemplates'
-import { computed, ref } from 'vue'
+import { useFormsStore } from '@/store/forms'
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import Input from '@/components/UI/Input.vue'
 import Button from '@/components/UI/Button.vue'
 
 
+const route = useRoute()
 const formStore = useFormsStore()
 
-// Получаем текущую форму (например, первую из массива или по id)
+
 const currentForm = computed(() => {
-    return formStore.forms.length > 0 ? formStore.forms[0] : null
+    return formStore.forms.find((form) => form.id === String(route.params.id))
 })
 
+const inputAnswer = ref<string>('')
+const textareaAnswer = ref<string>('')
+const radioAnswer = ref<string>('')
+const checkboxAnswer = ref<string[]>([])
+
+const answers = ref<Record<string, string | string[]>>({
+    inputAnswer: inputAnswer.value,
+    textareaAnswer: textareaAnswer.value,
+    radioAnswer: radioAnswer.value,
+    checkboxAnswer: checkboxAnswer.value,
+})
+
+watch(answers.value, (newVal) => {
+    console.log(newVal)
+    currentForm.value?.questions.forEach((question) => {
+        switch (question.type) {
+            case 'text':
+                if (question.isOneRow) {
+                    question.answer = newVal.inputAnswer
+                } else {
+                    question.answer = newVal.textareaAnswer
+                }
+                break
+            case 'select':
+                if (question.isMultiSelect) {
+                    question.answer = newVal.checkboxAnswer
+                } else {
+                    question.answer = newVal.radioAnswer
+                }
+                break
+        }
+    })
+})
 
 
 
@@ -109,6 +144,11 @@ const onSubmit = ():void => {
         height: 5px;
         background-color: rgb(230, 11, 11);
         border-radius: 50%;
+    }
+
+    .options-wrapper {
+        display: flex;
+        gap: 15px;
     }
 
     .option-wrapper {

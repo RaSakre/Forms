@@ -3,7 +3,7 @@
         <div class="container">
             <div class="hero-section">
                 <div class="hero-section__left">
-                    <button class="back-btn">
+                    <button @click="router.push('/')" class="back-btn">
                         Назад
                         <img src="../assets/constructor-arrow-back.svg" alt="">
                     </button>
@@ -20,8 +20,8 @@
                             </div>
                         </div>
                         <h2 class="constructor-title">Элементы формы</h2>
-                        <form @submit.prevent="addForm" action="" class="constructor-form">
-                            <button @click="addQuestion($event, {
+                        <form @submit.prevent="saveForm" action="" class="constructor-form">
+                            <button @click.prevent="addQuestion({
                                 type: 'text',
                                 isOneRow: true,
                                 question: '',
@@ -33,7 +33,7 @@
                                 <img src="../assets/constructor-pen.svg" alt="">
                                 <p>Однострочный ответ</p>
                             </button>
-                            <button @click="addQuestion($event, {
+                            <button @click.prevent="addQuestion({
                                 type: 'text',
                                 isOneRow: false,
                                 question: '',
@@ -44,7 +44,7 @@
                                 <img src="../assets/constructor-lines.svg" alt="">
                                 <p>Многострочный ответ</p>
                             </button>
-                            <button @click="addQuestion($event, {
+                            <button @click.prevent="addQuestion({
                                 type: 'select',
                                 question: '',
                                 id: uuidv4(),
@@ -57,7 +57,7 @@
                                 <img src="../assets/constructor-check.svg" alt="">
                                 <p>Список одиночного выбора</p>
                             </button>
-                            <button @click="addQuestion($event, {
+                            <button @click.prevent="addQuestion({
                                 type: 'select',
                                 question: '',
                                 id: uuidv4(),
@@ -72,8 +72,18 @@
                             </button>
                             <div class="constructor-actions">
                                 <h3 class="action-title">Действия</h3>
-                                <Button style="width: 100%;" :variant="'white'" :text="'Сохранить форму'" type="submit"
-                                    :img="saveIcon" />
+                                <div class="actions-buttons">
+                                    <Button :isLoading="formsStore.isLoading" style="width: 100%;" :variant="'white'"
+                                        :text="'Сохранить форму'" type="submit" :img="saveIcon" />
+                                    <router-link v-if="formsStore.currentEditingFormId === state.id"
+                                        :to="`/form/${state.id}`">
+                                        <Button style="width: 100%;" :variant="'gray'" :text="'Просмотр'" />
+                                    </router-link>
+
+                                    <Button v-if="formsStore.currentEditingFormId === state.id"
+                                        @click.prevent="deleteForm" :img="deleteFormIcon" style="width: 100%;"
+                                        :variant="'red'" :text="'Удалить форму'" />
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -97,57 +107,10 @@
                         <TransitionGroup name="list" tag="div" class="form-lower">
                             <div v-for="question in state.questions" :key="question.id" class="form-lower__item">
                                 <template v-if="question.type === 'text'">
-                                    <Input v-model="question.question" :variant="'gray'" :placeholder="'Вопрос'"
-                                        :type="'text'" />
-                                    <div class="form-item-lower">
-                                        <div class="form-item-lowerleft">
-                                            <img :src="question.image" alt="">
-                                            <p v-if="question.type === 'text'">{{ question.isOneRow ? 'Однострочный ответ' :'Многострочный ответ' }}</p>
-                                        </div>
-                                        <div class="form-item-lowerright">
-                                            <label class="modern-toggle">
-                                                <input type="checkbox" :checked="question.isRequired"
-                                                    @change="toggleQuestion(question.id)" />
-                                                <span class="modern-slider">
-                                                    <span class="toggle-knob"></span>
-                                                </span>
-                                            </label>
-                                            <img style="cursor: pointer;" src="../assets/delete.svg" alt=""
-                                                @click="deleteQuestion(question.id)" />
-                                        </div>
-                                    </div>
+                                    <TextField :question="question" :state="state" />
                                 </template>
                                 <template v-else-if="question.type === 'select'">
-                                    <!-- Для select вопросов -->
-                                    <Input v-model="question.question" :variant="'gray'" :placeholder="'Вопрос'"
-                                        :type="'text'" disabled />
-                                    <Input v-for="(item, index) in question.options" :key="question.id"
-                                        :image="question.isMultiSelect ? selectSquare : selectCircle" :type="'text'"
-                                        v-model="question.options[index]" :placeholder="`Вариант ${index + 1}`"
-                                        :style="[question.options.length > 1 ? {'width': '95%' } : {'width': '100%'}]"
-                                        :variant="'gray'" >
-                                        <img class="deleteSelect" @click="deleteSelectOption(question.id, index)" v-if="question.options.length > 1"  src="@/assets/selects-delete.svg" alt="">
-                                    </Input>
-                                    <div class="addBtn">
-                                        <button @click="question.options.push('')">Добавить</button>
-                                    </div>
-                                    <div class="form-item-lower">
-                                        <div class="form-item-lowerleft">
-                                            <img :src="question.image" alt="">
-                                            <p>{{ question.isMultiSelect ? 'Список множественного выбора' : 'Список  одиночного выбора' }}</p>
-                                        </div>
-                                        
-                                        <div class="form-item-lowerright">
-                                            <label class="modern-toggle">
-                                                <input type="checkbox" :checked="question.isRequired"
-                                                    @change="toggleQuestion(question.id)" />
-                                                <span class="modern-slider">
-                                                    <span class="toggle-knob"></span>
-                                                </span>
-                                            </label>
-                                            <img @click="deleteQuestion(question.id)" style="cursor: pointer;" src="../assets/delete.svg" alt="">
-                                        </div>
-                                    </div>
+                                    <SelectField :question="question" :state="state" />
                                 </template>
                             </div>
                         </TransitionGroup>
@@ -155,48 +118,68 @@
                 </div>
             </div>
         </div>
-        <router-link to="/form">LINK</router-link>
     </div>
 </template>
 <script setup lang="ts">
 import Button from '@/components/UI/Button.vue';
 import Input from '@/components/UI/Input.vue';
+import TextField from '@/components/fields/TextField.vue';
+import SelectField from '@/components/fields/SelectField.vue';
 
 import saveIcon from '@/assets/constructor-save.svg';
 import lines from '@/assets/constructor-lines.svg';
 import pencil from '@/assets/constructor-pen.svg';
 import singleSelect from '@/assets/constructor-check.svg'
-import selectCircle from '@/assets/circle-select.svg'
 import multiSelect from '@/assets/constructor-plus.svg'
-import selectSquare from '@/assets/square-select.svg'
+import deleteFormIcon from '@/assets/index-thrash.svg'
 
 import { v4 as uuidv4 } from 'uuid';
-import { ref, TransitionGroup } from 'vue';
+import { onMounted, ref, TransitionGroup } from 'vue';
 
-import type { Form, QuestionSelect, QuestionText} from '@/types/formTypes';
-import { useFormsStore } from '@/store/formsTemplates';
+import type { Form, QuestionSelect, QuestionText } from '@/types/formTypes';
+import { useFormsStore } from '@/store/forms';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const formsStore = useFormsStore()
 
 
-const toggleQuestion = (questionId: string) => {
-    const question = state.value.questions.find(q => q.id === questionId)
-    if (question) {
-        question.isRequired = !question.isRequired
-    }
-}
-
-
 const state = ref<Form>({
-    id: uuidv4(),
     name: '',
     description: '',
     questions: []
 })
 
-const addForm = (): void => {
-    formsStore.addForm(state.value)
+
+const saveForm = async () => {
+    const formId = await formsStore.addForm(state.value);
+    state.value.id = formId;
 }
+
+const resetForm = (): void => {
+    state.value = {
+        name: '',
+        description: '',
+        questions: []
+    }
+    isDescriptionWritten.value = false
+    isNameWritten.value = false
+}
+
+const deleteForm = () => {
+    if (formsStore.currentEditingFormId) {
+        formsStore.deleteForm(formsStore.currentEditingFormId);
+        formsStore.clearEditingForm();
+        resetForm();
+    }
+}
+
+
+onMounted(() => {
+    formsStore.clearEditingForm();
+});
+
 
 const isNameWritten = ref<boolean>(false);
 const isDescriptionWritten = ref<boolean>(false);
@@ -209,6 +192,7 @@ const handleInputBlur = (): void => {
     }
 }
 
+
 const handleTextareaBlur = (): void => {
     if (state.value.description === '' && !isDescriptionWritten.value) {
         isDescriptionWritten.value = false;
@@ -217,8 +201,7 @@ const handleTextareaBlur = (): void => {
     }
 }
 
-const addQuestion = (event: Event, question: QuestionText | QuestionSelect): void => {
-    event.preventDefault()
+const addQuestion = (question: QuestionText | QuestionSelect): void => {
     switch (question.type) {
         case 'text':
             state.value.questions.push(question)
@@ -228,20 +211,6 @@ const addQuestion = (event: Event, question: QuestionText | QuestionSelect): voi
             break;
     }
 }
-
-const deleteQuestion = (id: string): void => {
-    state.value.questions = state.value.questions.filter((question) => question.id !== id)
-}
-
-const deleteSelectOption = (id:string, index:number): void => {
-    const question = state.value.questions.find(q => q.id === id)
-    if (question && question.type === 'select') {
-        question.options.splice(index, 1)
-    }
-}
-
-
-
 
 
 
@@ -313,6 +282,22 @@ const deleteSelectOption = (id:string, index:number): void => {
     width: 20px;
 }
 
+.form-lower {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.form-lower__item {
+    border: 1px solid gray;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+
+
+
+
 .constructor-title {
     font-size: 25px;
     font-weight: 500;
@@ -331,6 +316,12 @@ const deleteSelectOption = (id:string, index:number): void => {
     align-items: center;
     gap: 10px;
     justify-content: center;
+}
+
+.actions-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px
 }
 
 .constructor-button img {
@@ -406,58 +397,13 @@ const deleteSelectOption = (id:string, index:number): void => {
     width: 20px;
 }
 
-.form-lower__item {
-    border: 1px solid gray;
-    border-radius: 10px;
-    padding: 20px;
-}
 
-.form-lower__item div:not(:last-child) {
-    margin-bottom: 15px;
-}
 
-.form-item-lower {
-    position: relative;
-    margin-top: 30px;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-}
 
-.form-item-lowerright {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
 
-.form-item-lower::before {
-    content: '';
-    position: absolute;
-    top: -15px;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background-color: rgb(128 128 128 / 30%)
-}
 
-.form-lower {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-}
 
-.form-item-lowerleft {
-    display: flex;
-    gap: 5px;
-}
 
-.form-item-lowerleft img {
-    width: 20px;
-}
-
-.form-item-lowerright img {
-    width: 20px;
-}
 
 .addBtn button {
     background-color: rgb(128 128 128 / 30%);
@@ -482,92 +428,7 @@ const deleteSelectOption = (id:string, index:number): void => {
     right: -35px;
 }
 
-.modern-toggle {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 32px;
-}
 
-.modern-toggle input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.modern-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, #cccccc 0%, #aaaaaa 100%);
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    border-radius: 16px;
-    box-shadow:
-        inset 0 2px 4px rgba(0, 0, 0, 0.1),
-        0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.modern-slider:before {
-    content: '';
-    position: absolute;
-    height: 28px;
-    width: 28px;
-    left: 2px;
-    bottom: 2px;
-    background: white;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    border-radius: 50%;
-    box-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.2),
-        0 1px 2px rgba(0, 0, 0, 0.1);
-    z-index: 2;
-}
-
-.toggle-knob {
-    position: absolute;
-    top: 50%;
-    left: 8px;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 4px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    opacity: 0.7;
-}
-
-input:checked+.modern-slider {
-    background: linear-gradient(135deg, #ff7b00 0%, #ff5500 100%);
-    box-shadow:
-        inset 0 2px 4px rgba(255, 123, 0, 0.3),
-        0 1px 2px rgba(255, 123, 0, 0.2);
-}
-
-input:checked+.modern-slider:before {
-    transform: translateX(28px);
-}
-
-input:checked+.modern-slider .toggle-knob {
-    left: calc(100% - 12px);
-    background: rgba(255, 255, 255, 0.8);
-}
-
-/* Анимация при наведении */
-.modern-toggle:hover .modern-slider {
-    transform: scale(1.05);
-}
-
-/* Активное состояние */
-input:active+.modern-slider:before {
-    width: 32px;
-}
-
-input:checked:active+.modern-slider:before {
-    transform: translateX(24px);
-}
 
 .status-text {
     font-family: 'Segoe UI', system-ui, sans-serif;

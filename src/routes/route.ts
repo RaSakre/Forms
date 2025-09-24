@@ -5,7 +5,7 @@ import { createRouter,createWebHistory } from "vue-router"
 
 const routes = [
     { path: '/constructor', component: Constructor },
-    {path: '/form', component: Form },
+    {path: '/form/:id', component: Form },
     {path: '/', component: MyForms},
 ]
 
