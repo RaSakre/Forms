@@ -1,5 +1,5 @@
 <template>
-    <footer class="footer">
+    <footer v-if="!authRoutes.includes(route.path)" class="footer">
         <div class="container">
             <div class="footer__content">
                 &#169; Все права защищены
@@ -11,7 +11,9 @@
     </footer>
 </template>
 <script setup>
-
+import { useRoute } from 'vue-router';
+const route = useRoute()
+const authRoutes = ['/login', '/register', '/forgot-password']
 </script>
 <style scoped>
 .footer {

@@ -2,7 +2,6 @@
 import { onMounted, onUnmounted } from 'vue';
 import { useFormsStore } from './store/forms';
 import Layout from './Layout/Layout.vue';
-import Login from './components/Auth/Login.vue';
 
 const formsStore = useFormsStore();
 
@@ -18,7 +17,6 @@ onUnmounted(() => {
 
 <template>
 <Layout/>
-<!-- <Login/> -->
 </template>
 
 <style scoped>

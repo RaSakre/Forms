@@ -8,16 +8,23 @@
             <ul v-if="formsStore.forms.length" class="forms-list">
                 <li v-for="form in formsStore.forms" :key="form.id" class="form-item">
                     <router-link class="form-link" :to='`/form/${form.id}`'>
-                    <h3 class="form-title">{{ form.name}}</h3>
-                    <p class="form-description">{{form.description}}</p>
+                        <h3 class="form-title">{{ form.name }}</h3>
+                        <p class="form-description">{{ form.description }}</p>
                     </router-link>
                     <div class="form-buttons">
                         <button class="form-button">
                             <img :src="msgs" alt="">
                         </button>
-                        <button  class="form-button">
-                            <img :src="pen" alt="">
-                        </button>
+                        <router-link class="form-button" :to="{
+                            name: 'constructor',
+                            params: {
+                                formId: form.id
+                            }
+                        }">
+                            <button>
+                                <img :src="pen" alt="">
+                            </button>
+                        </router-link>
                         <button @click="form.id ? formsStore.deleteForm(form.id) : ''" class="form-button">
                             <img :src="thrash" alt="">
                         </button>
@@ -120,6 +127,4 @@ const formsStore = useFormsStore()
     right: -45px;
     top: 0;
 }
-
-
 </style>

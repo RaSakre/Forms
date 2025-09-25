@@ -72,6 +72,15 @@ const deleteSelectOption = (id: string, index: number): void => {
         question.options.splice(index, 1)
     }
 }
+
+// const field = defineModel<QuestionSelect>({required: true, default: () => ({
+//     id: '',
+//     type: 'select',
+//     question: '',
+//     image: '',
+//     isRequired: false,
+//     isMultiSelect: false,
+// })})
 </script>
 <style scoped>
 .form-item-lower {

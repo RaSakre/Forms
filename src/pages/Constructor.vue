@@ -75,7 +75,7 @@
                                 <div class="actions-buttons">
                                     <Button :isLoading="formsStore.isLoading" style="width: 100%;" :variant="'white'"
                                         :text="'Сохранить форму'" type="submit" :img="saveIcon" />
-                                    <router-link v-if="formsStore.currentEditingFormId === state.id"
+                                    <router-link v-if="showViewButton"
                                         :to="`/form/${state.id}`">
                                         <Button style="width: 100%;" :variant="'gray'" :text="'Просмотр'" />
                                     </router-link>
@@ -118,11 +118,13 @@
                 </div>
             </div>
         </div>
+        <Popup  :show="showPopup"/>
     </div>
 </template>
 <script setup lang="ts">
 import Button from '@/components/UI/Button.vue';
 import Input from '@/components/UI/Input.vue';
+import Popup from '@/components/UI/Popup.vue';
 import TextField from '@/components/fields/TextField.vue';
 import SelectField from '@/components/fields/SelectField.vue';
 
@@ -134,15 +136,17 @@ import multiSelect from '@/assets/constructor-plus.svg'
 import deleteFormIcon from '@/assets/index-thrash.svg'
 
 import { v4 as uuidv4 } from 'uuid';
-import { onMounted, ref, TransitionGroup } from 'vue';
+import { computed, onMounted, ref, TransitionGroup, watch } from 'vue';
 
 import type { Form, QuestionSelect, QuestionText } from '@/types/formTypes';
 import { useFormsStore } from '@/store/forms';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
+const route = useRoute()
 const router = useRouter()
-
 const formsStore = useFormsStore()
+
+const showPopup = ref<boolean>(false)
 
 
 const state = ref<Form>({
@@ -152,9 +156,14 @@ const state = ref<Form>({
 })
 
 
+
 const saveForm = async () => {
     const formId = await formsStore.addForm(state.value);
     state.value.id = formId;
+    showPopup.value = true
+    setTimeout(() => {
+        showPopup.value = false
+    }, 2000)
 }
 
 const resetForm = (): void => {
@@ -175,9 +184,16 @@ const deleteForm = () => {
     }
 }
 
+const showViewButton = computed(() => {
+    const isEditingCurrentForm = formsStore.currentEditingFormId === state.value.id
+    const isViewingSameForm = state.value.id && state.value.id === route.params.formId
+
+    return isEditingCurrentForm || isViewingSameForm
+})
 
 onMounted(() => {
     formsStore.clearEditingForm();
+    loadDataFromForm()
 });
 
 
@@ -212,11 +228,26 @@ const addQuestion = (question: QuestionText | QuestionSelect): void => {
     }
 }
 
+const loadDataFromForm = () => {
+    if (route.params.formId) {
+        const form =  formsStore.forms.find((form) => form.id === route.params.formId);
+        if (form) {
+            state.value = {...form}
+            isDescriptionWritten.value = true;
+            isNameWritten.value = true;
+        }
+    }
+}
 
+watch(() => route.params.formId, () => {
+    loadDataFromForm()
+}
+)
 
 </script>
 <style scoped>
 .main {
+    position: relative;
     padding: 40px 0px;
 }
 

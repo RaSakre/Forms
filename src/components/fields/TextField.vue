@@ -52,6 +52,15 @@ const toggleQuestion = (questionId: string) => {
 const deleteQuestion = (id: string): void => {
     props.state.questions = props.state.questions.filter((question) => question.id !== id)
 }
+
+// const field = defineModel<QuestionText>({required: true, default: () => ({
+//     id: '',
+//     type: 'text',
+//     question: '',
+//     image: '',
+//     isRequired: false,
+//     isOneRow: false,
+// })})
 </script>
 <style >
 .form-item-lower {

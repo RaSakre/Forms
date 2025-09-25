@@ -1,5 +1,5 @@
 <template>
-    <header class="header">
+    <header v-if="!authRoutes.includes(route.path)" class="header">
         <div class="container">
             <div class="header__content">
                 <router-link to="/">
@@ -26,7 +26,9 @@
     </header>
 </template>
 <script setup>
-
+import { useRoute } from 'vue-router';
+const route = useRoute()
+const authRoutes = ['/login', '/register', '/forgot-password']
 </script>
 <style scoped>
 .header {
