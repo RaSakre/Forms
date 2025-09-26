@@ -17,14 +17,14 @@
     </div>
 </template>
 <script setup lang='ts'>
-import type { QuestionText, Form } from '@/types/formTypes';
+import type { QuestionText, Form, IForm } from '@/types/formTypes';
 import Input from '../UI/Input.vue';
 import { ref } from 'vue';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 interface Props {
     question: QuestionText,
-    state: Form,
+    state: IForm,
 }
 const props = defineProps<Props>()
 
@@ -43,14 +43,14 @@ const addToggleRef = (el: any, questionId: string) => {
 }
 
 const toggleQuestion = (questionId: string) => {
-    const question = props.state.questions.find(q => q.id === questionId)
+    const question = props.state.fields.find(q => q.options.id === questionId)
     if (question) {
-        question.isRequired = !question.isRequired
+        question.options.isRequired = !question.options.isRequired
     }
 }
 
 const deleteQuestion = (id: string): void => {
-    props.state.questions = props.state.questions.filter((question) => question.id !== id)
+    props.state.fields = props.state.fields.filter((question) => question.options.id !== id)
 }
 
 // const field = defineModel<QuestionText>({required: true, default: () => ({

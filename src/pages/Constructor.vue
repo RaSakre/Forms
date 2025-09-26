@@ -5,84 +5,44 @@
                 <div class="hero-section__left">
                     <button @click="router.push('/')" class="back-btn">
                         Назад
-                        <img src="../assets/constructor-arrow-back.svg" alt="">
+                        <img src="../assets/constructor/constructor-arrow-back.svg" alt="">
                     </button>
                     <h1 class="hero-section__title">Создание формы</h1>
                     <div class="hero-section__constructor">
                         <div class="constructor-tabs">
                             <div class="tabs-item">
-                                <img src="../assets/constructor-house.svg" alt="">
+                                <img src="../assets/constructor/constructor-house.svg" alt="">
                                 <p>Конструктор</p>
                             </div>
                             <div class="tabs-item">
-                                <img src="../assets/constructor-settings.svg" alt="">
+                                <img src="../assets/constructor/constructor-settings.svg" alt="">
                                 <p>Настройки</p>
                             </div>
                         </div>
                         <h2 class="constructor-title">Элементы формы</h2>
-                        <form @submit.prevent="saveForm" action="" class="constructor-form">
-                            <button @click.prevent="addQuestion({
-                                type: 'text',
-                                isOneRow: true,
-                                question: '',
-                                id: uuidv4(),
-                                image: pencil,
-                                isRequired: false,
-                            })
-                                " class="constructor-button">
-                                <img src="../assets/constructor-pen.svg" alt="">
-                                <p>Однострочный ответ</p>
-                            </button>
-                            <button @click.prevent="addQuestion({
-                                type: 'text',
-                                isOneRow: false,
-                                question: '',
-                                id: uuidv4(),
-                                image: lines,
-                                isRequired: false,
-                            })" class="constructor-button">
-                                <img src="../assets/constructor-lines.svg" alt="">
-                                <p>Многострочный ответ</p>
-                            </button>
-                            <button @click.prevent="addQuestion({
-                                type: 'select',
-                                question: '',
-                                id: uuidv4(),
-                                isMultiSelect: false,
-                                image: singleSelect,
-                                options: [''],
-                                isRequired: false,
-                            })
-                                " class="constructor-button">
-                                <img src="../assets/constructor-check.svg" alt="">
-                                <p>Список одиночного выбора</p>
-                            </button>
-                            <button @click.prevent="addQuestion({
-                                type: 'select',
-                                question: '',
-                                id: uuidv4(),
-                                isMultiSelect: true,
-                                image: multiSelect,
-                                options: [''],
-                                isRequired: false,
-                            })
-                                " class="constructor-button">
-                                <img src="../assets/constructor-plus.svg" alt="">
-                                <p>Список множественного выбора</p>
-                            </button>
+                        <form @submit.prevent="state.id ? editExistingForm() : saveForm()" action=""
+                            class="constructor-form">
+                            <ButtonConstructor @addQuestion="addQuestion(oneRow)" :text="'Однострочный ответ'"
+                                :image="pencil" />
+                            <ButtonConstructor @addQuestion="addQuestion(multiRow)" :text="'Многострочный ответ'"
+                                :image="lines" />
+                            <ButtonConstructor @addQuestion="addQuestion(radio)" :text="'Список одиночного выбора'"
+                                :image="singleSelect" />
+                            <ButtonConstructor @addQuestion="addQuestion(checkbox)"
+                                :text="'Список множественного выбора'" :image="multiSelect" />
                             <div class="constructor-actions">
                                 <h3 class="action-title">Действия</h3>
                                 <div class="actions-buttons">
-                                    <Button :isLoading="formsStore.isLoading" style="width: 100%;" :variant="'white'"
+                                    <Button v-if="state.id" :isLoading="formsStore.isLoading" :variant="'white'"
+                                        :text="'Сохранить изменённую форму'" type="submit" :img="saveIcon" />
+                                    <Button v-else :isLoading="formsStore.isLoading" :variant="'white'"
                                         :text="'Сохранить форму'" type="submit" :img="saveIcon" />
-                                    <router-link v-if="showViewButton"
-                                        :to="`/form/${state.id}`">
+                                    <router-link v-if="showActionsButton" :to="`/form/${state.id}`">
                                         <Button style="width: 100%;" :variant="'gray'" :text="'Просмотр'" />
                                     </router-link>
 
-                                    <Button v-if="formsStore.currentEditingFormId === state.id"
-                                        @click.prevent="deleteForm" :img="deleteFormIcon" style="width: 100%;"
-                                        :variant="'red'" :text="'Удалить форму'" />
+                                    <Button v-if="showActionsButton" @click.prevent="deleteForm" :img="deleteFormIcon"
+                                        style="width: 100%;" :variant="'red'" :text="'Удалить форму'" />
                                 </div>
                             </div>
                         </form>
@@ -91,12 +51,13 @@
                 <div class="hero-section__right">
                     <div class="hero-section__form-upper">
                         <h2 v-if="isNameWritten && state.name !== ''" class="form-title">{{ state.name }}
-                            <img @click="isNameWritten = !isNameWritten" src="@/assets/constructor-edit.svg" alt="">
+                            <img @click="isNameWritten = !isNameWritten" src="@/assets/constructor/constructor-edit.svg"
+                                alt="">
                         </h2>
                         <h2 v-if="isDescriptionWritten && state.description !== ''" class="form-title">{{
                             state.description }}
                             <img @click="isDescriptionWritten = !isDescriptionWritten"
-                                src="@/assets/constructor-edit.svg" alt="">
+                                src="@/assets/constructor/constructor-edit.svg" alt="">
                         </h2>
                         <Input v-if="!isNameWritten" @blur="handleInputBlur" v-model="state.name" :variant="'gray'"
                             :type="'text'" :placeholder="'Название'" />
@@ -105,12 +66,12 @@
                     </div>
                     <div class="hero-section__form-lower">
                         <TransitionGroup name="list" tag="div" class="form-lower">
-                            <div v-for="question in state.questions" :key="question.id" class="form-lower__item">
-                                <template v-if="question.type === 'text'">
-                                    <TextField :question="question" :state="state" />
+                            <div v-for="question in state.fields" :key="question.options.id" class="form-lower__item">
+                                <template v-if="question.options.type === 'text'">
+                                    <TextField :question="question.options" :key="question.options.id" :state="state" />
                                 </template>
-                                <template v-else-if="question.type === 'select'">
-                                    <SelectField :question="question" :state="state" />
+                                <template v-else-if="question.options.type === 'select'">
+                                    <SelectField :question="question.options" :key="question.options.id" :state="state" />
                                 </template>
                             </div>
                         </TransitionGroup>
@@ -118,7 +79,7 @@
                 </div>
             </div>
         </div>
-        <Popup  :show="showPopup"/>
+        <Popup :show="showPopup" :text="popupText" />
     </div>
 </template>
 <script setup lang="ts">
@@ -127,18 +88,20 @@ import Input from '@/components/UI/Input.vue';
 import Popup from '@/components/UI/Popup.vue';
 import TextField from '@/components/fields/TextField.vue';
 import SelectField from '@/components/fields/SelectField.vue';
+import ButtonConstructor from '@/components/UI/ButtonConstructor.vue';
+import { checkbox, multiRow, oneRow, radio } from '@/fields-objects/objects';
+import { serverTimestamp } from 'firebase/firestore';
 
-import saveIcon from '@/assets/constructor-save.svg';
-import lines from '@/assets/constructor-lines.svg';
-import pencil from '@/assets/constructor-pen.svg';
-import singleSelect from '@/assets/constructor-check.svg'
-import multiSelect from '@/assets/constructor-plus.svg'
+import saveIcon from '@/assets/constructor/constructor-save.svg';
+import lines from '@/assets/constructor/constructor-lines.svg';
+import pencil from '@/assets/constructor/constructor-pen.svg';
+import singleSelect from '@/assets/constructor/constructor-check.svg'
+import multiSelect from '@/assets/constructor/constructor-plus.svg'
 import deleteFormIcon from '@/assets/index-thrash.svg'
 
-import { v4 as uuidv4 } from 'uuid';
 import { computed, onMounted, ref, TransitionGroup, watch } from 'vue';
 
-import type { Form, QuestionSelect, QuestionText } from '@/types/formTypes';
+import type {IForm, IField } from '@/types/formTypes';
 import { useFormsStore } from '@/store/forms';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -147,44 +110,69 @@ const router = useRouter()
 const formsStore = useFormsStore()
 
 const showPopup = ref<boolean>(false)
+let popupText = ref<string>('')
 
 
-const state = ref<Form>({
+// const state = ref<Form>({
+//     name: '',
+//     description: '',
+//     questions: []
+// })
+
+const state = ref<IForm>({
     name: '',
     description: '',
-    questions: []
+    fields: []
 })
 
 
 
 const saveForm = async () => {
-    const formId = await formsStore.addForm(state.value);
-    state.value.id = formId;
-    showPopup.value = true
-    setTimeout(() => {
-        showPopup.value = false
-    }, 2000)
+    if (state.value.name !== '' && state.value.description !== '' && state.value.fields.length > 0) {
+        state.value.createdAt = serverTimestamp()
+        const formId = await formsStore.addForm(state.value);
+        state.value.id = formId;
+        popupText.value = 'Форма сохранена'
+        showPopup.value = true
+        setTimeout(() => {
+            showPopup.value = false
+            popupText.value = ''
+        }, 3000)
+    }
+}
+
+const editExistingForm = async () => {
+    if (state.value.id) {
+        await formsStore.editForm(state.value);
+        formsStore.clearEditingForm();
+        popupText.value = 'Форма отредактирована'
+        showPopup.value = true
+        setTimeout(() => {
+            showPopup.value = false
+            popupText.value = ''
+        }, 3000)
+    }
 }
 
 const resetForm = (): void => {
     state.value = {
         name: '',
         description: '',
-        questions: []
+        fields: []
     }
     isDescriptionWritten.value = false
     isNameWritten.value = false
 }
 
 const deleteForm = () => {
-    if (formsStore.currentEditingFormId) {
-        formsStore.deleteForm(formsStore.currentEditingFormId);
+    if (formsStore.currentEditingFormId || route.params.formId) {
+        formsStore.deleteForm(formsStore.currentEditingFormId ? formsStore.currentEditingFormId : route.params.formId as string);
         formsStore.clearEditingForm();
         resetForm();
     }
 }
 
-const showViewButton = computed(() => {
+const showActionsButton = computed(() => {
     const isEditingCurrentForm = formsStore.currentEditingFormId === state.value.id
     const isViewingSameForm = state.value.id && state.value.id === route.params.formId
 
@@ -194,7 +182,10 @@ const showViewButton = computed(() => {
 onMounted(() => {
     formsStore.clearEditingForm();
     loadDataFromForm()
+    loadDataFromForm()
 });
+
+
 
 
 const isNameWritten = ref<boolean>(false);
@@ -217,27 +208,30 @@ const handleTextareaBlur = (): void => {
     }
 }
 
-const addQuestion = (question: QuestionText | QuestionSelect): void => {
-    switch (question.type) {
+const addQuestion = (question: IField): void => {
+    switch (question.options.type) {
         case 'text':
-            state.value.questions.push(question)
+            state.value.fields.push(question)
             break;
         case 'select':
-            state.value.questions.push(question)
+            state.value.fields.push(question)
             break;
     }
 }
 
 const loadDataFromForm = () => {
     if (route.params.formId) {
-        const form =  formsStore.forms.find((form) => form.id === route.params.formId);
+        const form = formsStore.forms.find((form) => form.id === route.params.formId);
         if (form) {
-            state.value = {...form}
+            state.value = { ...form }
             isDescriptionWritten.value = true;
             isNameWritten.value = true;
         }
     }
 }
+
+
+
 
 watch(() => route.params.formId, () => {
     loadDataFromForm()

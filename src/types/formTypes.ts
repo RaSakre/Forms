@@ -1,8 +1,24 @@
+import type { FieldValue } from "firebase/firestore";
+
 export interface Form  {
     id?: string;
     name: string;
     description: string;
     questions: Array<QuestionText | QuestionSelect>;
+    createdAt?: FieldValue;
+}
+
+export interface IForm {
+    id?: string;
+    name: string;
+    description: string;
+    fields: IField[];
+    createdAt?: FieldValue;
+}
+
+export interface IField {
+    component: string;
+    options: QuestionText | QuestionSelect
 }
 
 export type QuestionType = 'text' | 'select';

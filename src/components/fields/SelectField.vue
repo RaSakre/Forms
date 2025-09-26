@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Input from '../UI/Input.vue';
-import type { QuestionSelect, Form } from '@/types/formTypes';
+import type { QuestionSelect, Form, IForm } from '@/types/formTypes';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 
@@ -39,7 +39,7 @@ import selectCircle from '@/assets/circle-select.svg'
 
 interface Props {
     question: QuestionSelect,
-    state: Form,
+    state: IForm,
 }
 const props = defineProps<Props>()
 const toggleRefs = ref(new Map())
@@ -56,20 +56,20 @@ const addToggleRef = (el: any, questionId: string) => {
 }
 
 const toggleQuestion = (questionId: string) => {
-    const question = props.state.questions.find(q => q.id === questionId)
+    const question = props.state.fields.find(q => q.options.id === questionId)
     if (question) {
-        question.isRequired = !question.isRequired
+        question.options.isRequired = !question.options.isRequired
     }
 }
 
 const deleteQuestion = (id: string): void => {
-    props.state.questions = props.state.questions.filter((question) => question.id !== id)
+    props.state.fields = props.state.fields.filter((question) => question.options.id !== id)
 }
 
 const deleteSelectOption = (id: string, index: number): void => {
-    const question = props.state.questions.find(q => q.id === id)
-    if (question && question.type === 'select') {
-        question.options.splice(index, 1)
+    const question = props.state.fields.find(q => q.options.id === id)
+    if (question && question.options.type === 'select') {
+        question.options.options.splice(index, 1)
     }
 }
 

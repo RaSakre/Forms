@@ -6,22 +6,22 @@
         </div>
 
         <form @submit.prevent="onSubmit" class="form">
-            <div v-for="(question, index) in currentForm?.questions" :key="question.id" class="question-wrapper">
+            <div v-for="(question, index) in currentForm?.fields" :key="question.options.id" class="question-wrapper">
                 <label class="label-form">
-                    <span class="question-title">{{ question.question }}
-                        <div v-if="question.isRequired" class="required"></div>
+                    <span class="question-title">{{ question.options.question }}
+                        <div v-if="question.options.isRequired" class="required"></div>
                     </span>
-                    <template v-if="question.type === 'text' && question.isOneRow">
+                    <template v-if="question.options.type === 'text' && question.options.isOneRow">
                         <Input v-model="answers.inputAnswer" :variant="'gray'" type="text" />
                     </template>
 
-                    <template v-else-if="question.type === 'text' && !question.isOneRow">
+                    <template v-else-if="question.options.type === 'text' && !question.options.isOneRow">
                         <textarea v-model="answers.textareaAnswer" class="form-textarea" rows="3"></textarea>
                     </template>
 
-                    <template v-else-if="question.type === 'select' && !question.isMultiSelect">
+                    <template v-else-if="question.options.type === 'select' && !question.options.isMultiSelect">
                         <div class="options-wrapper">
-                            <div v-for="option in question.options" :key="question.id" class="option-wrapper">
+                            <div v-for="option in question.options.options" :key="question.options.id" class="option-wrapper">
                                 <Input v-model="answers.radioAnswer" :value="option" :type="'radio'"
                                     :name="`question-${index}`" />
                                 <span>{{ option }}</span>
@@ -29,8 +29,8 @@
                         </div>
                     </template>
 
-                    <template v-else-if="question.type === 'select' && question.isMultiSelect">
-                        <div v-for="option in question.options" :key="question.id" class="option-wrapper">
+                    <template v-else-if="question.options.type === 'select' && question.options.isMultiSelect">
+                        <div v-for="option in question.options.options" :key="question.options.id" class="option-wrapper">
                             <Input :type="'checkbox'" :value="option" />
                             <span>{{ option }}</span>
                         </div>
@@ -57,7 +57,7 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Input from '@/components/UI/Input.vue'
 import Button from '@/components/UI/Button.vue'
-
+import FormUniversal from '@/components/FormUniversal.vue'
 
 const route = useRoute()
 const formStore = useFormsStore()
@@ -81,20 +81,20 @@ const answers = ref<Record<string, string | string[]>>({
 
 watch(answers.value, (newVal) => {
     console.log(newVal)
-    currentForm.value?.questions.forEach((question) => {
-        switch (question.type) {
+    currentForm.value?.fields.forEach((question) => {
+        switch (question.options.type) {
             case 'text':
-                if (question.isOneRow) {
-                    question.answer = newVal.inputAnswer
+                if (question.options.isOneRow) {
+                    question.options.answer = newVal.inputAnswer
                 } else {
-                    question.answer = newVal.textareaAnswer
+                    question.options.answer = newVal.textareaAnswer
                 }
                 break
             case 'select':
-                if (question.isMultiSelect) {
-                    question.answer = newVal.checkboxAnswer
+                if (question.options.isMultiSelect) {
+                    question.options.answer = newVal.checkboxAnswer
                 } else {
-                    question.answer = newVal.radioAnswer
+                    question.options.answer = newVal.radioAnswer
                 }
                 break
         }

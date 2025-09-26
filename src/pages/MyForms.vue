@@ -2,9 +2,19 @@
     <div class="container">
         <h2 class="my-forms-title">Мои формы</h2>
         <div class="my-forms">
-            <Input class="search" :variant="'gray'" :type="'text'" :placeholder="'Найти'">
-            <img class="search-icon" src="../assets/search.svg" alt="">
-            </Input>
+            <div class="filters-form">
+                <Input v-model="inputSearchForm" @update:modelValue="find(inputSearchForm)" class="search"
+                    :variant="'gray'" :type="'text'" :placeholder="'Найти'">
+                <img class="search-icon" src="../assets/search.svg" alt="">
+                </Input>
+                <select @change="sortBy" v-model="option" class="custom-select">
+                    <option value="new" selected>Сначала новые</option>
+                    <option value="old">Сначала старые</option>
+                    <option value="a-z">Порядок А-Я</option>
+                    <option value="z-a">Порядок Я-А</option>
+                </select>
+            </div>
+
             <ul v-if="formsStore.forms.length" class="forms-list">
                 <li v-for="form in formsStore.forms" :key="form.id" class="form-item">
                     <router-link class="form-link" :to='`/form/${form.id}`'>
@@ -42,8 +52,20 @@ import pen from '@/assets/index-pen.svg'
 import thrash from '@/assets/index-thrash.svg'
 
 import { useFormsStore } from '@/store/forms';
+import { ref } from 'vue';
 
+const inputSearchForm = ref<string>('')
 const formsStore = useFormsStore()
+
+const find = (input: string) => {
+    formsStore.findForm(input)
+}
+
+const option = ref<string>('new')
+
+const sortBy = () => {
+    formsStore.sortByValue(option.value)
+}
 
 
 
@@ -53,7 +75,7 @@ const formsStore = useFormsStore()
     position: absolute;
     width: 20px;
     right: 10px;
-    top: 8px;
+    top: 10px;
 }
 
 .form-link {
@@ -127,4 +149,47 @@ const formsStore = useFormsStore()
     right: -45px;
     top: 0;
 }
+
+.filters-form {
+    display: flex;
+    justify-content: space-between;
+}
+
+.custom-select {
+    width: 200px;
+    padding: 10px 35px 10px 15px;
+    font-size: 14px;
+    color: #fff;
+    height: 100%;
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 5px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("../assets/down-arrow.svg");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 15px;
+}
+
+
+.custom-select option {
+    background-color: #666;
+    color: #fff;
+    padding: 10px;
+}
+
+.custom-select:hover {
+    background-color: #3a3a3a;
+}
+
+.custom-select:focus {
+    outline: none;
+    border-color: #777;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+
 </style>

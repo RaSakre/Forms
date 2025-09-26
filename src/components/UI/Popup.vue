@@ -3,7 +3,7 @@
         <div v-if="show" class="popup">
             <div class="popup-content">
                 <div class="popup-icon">✓</div>
-                <span class="popup-text">Форма сохранена</span>
+                <span class="popup-text">{{ text }}</span>
             </div>
         </div>
     </transition>
@@ -13,6 +13,10 @@ const props = defineProps({
     show: {
         type: Boolean,
         default: false
+    },
+    text: {
+        type: String,
+        default: ''
     }
 })
 </script>
