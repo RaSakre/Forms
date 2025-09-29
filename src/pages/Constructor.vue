@@ -22,13 +22,13 @@
                         <h2 class="constructor-title">Элементы формы</h2>
                         <form @submit.prevent="state.id ? editExistingForm() : saveForm()" action=""
                             class="constructor-form">
-                            <ButtonConstructor @addQuestion="addQuestion(oneRow)" :text="'Однострочный ответ'"
+                            <ButtonConstructor @addQuestion="addQuestion(new OneRow())" :text="'Однострочный ответ'"
                                 :image="pencil" />
-                            <ButtonConstructor @addQuestion="addQuestion(multiRow)" :text="'Многострочный ответ'"
+                            <ButtonConstructor @addQuestion="addQuestion(new MultiRow())" :text="'Многострочный ответ'"
                                 :image="lines" />
-                            <ButtonConstructor @addQuestion="addQuestion(radio)" :text="'Список одиночного выбора'"
+                            <ButtonConstructor @addQuestion="addQuestion(new Radio())" :text="'Список одиночного выбора'"
                                 :image="singleSelect" />
-                            <ButtonConstructor @addQuestion="addQuestion(checkbox)"
+                            <ButtonConstructor @addQuestion="addQuestion(new Checkbox())"
                                 :text="'Список множественного выбора'" :image="multiSelect" />
                             <div class="constructor-actions">
                                 <h3 class="action-title">Действия</h3>
@@ -89,7 +89,7 @@ import Popup from '@/components/UI/Popup.vue';
 import TextField from '@/components/fields/TextField.vue';
 import SelectField from '@/components/fields/SelectField.vue';
 import ButtonConstructor from '@/components/UI/ButtonConstructor.vue';
-import { checkbox, multiRow, oneRow, radio } from '@/fields-objects/objects';
+import {  OneRow, MultiRow, Checkbox, Radio} from '@/fields-objects/objects';
 import { serverTimestamp } from 'firebase/firestore';
 
 import saveIcon from '@/assets/constructor/constructor-save.svg';
@@ -113,11 +113,6 @@ const showPopup = ref<boolean>(false)
 let popupText = ref<string>('')
 
 
-// const state = ref<Form>({
-//     name: '',
-//     description: '',
-//     questions: []
-// })
 
 const state = ref<IForm>({
     name: '',
@@ -211,10 +206,18 @@ const handleTextareaBlur = (): void => {
 const addQuestion = (question: IField): void => {
     switch (question.options.type) {
         case 'text':
-            state.value.fields.push(question)
+            if (question.options.isOneRow) {
+                state.value.fields.push(new OneRow())
+            } else {
+                state.value.fields.push(new MultiRow())
+            }
             break;
         case 'select':
-            state.value.fields.push(question)
+            if (question.options.isMultiSelect) {
+                state.value.fields.push(new Checkbox())
+            } else {
+                state.value.fields.push(new Radio())
+            }
             break;
     }
 }

@@ -5,60 +5,64 @@ import lines from '@/assets/constructor/constructor-lines.svg';
 import singleSelect from '@/assets/constructor/constructor-check.svg'
 import multiSelect from '@/assets/constructor/constructor-plus.svg'
 
-export const oneRow: IField = {
-    component: 'TextField',
-    options: {
-    id: uuidv4(),
-    isOneRow: true,
-    isRequired: false,
-    question: '',
-    type: 'text',
-    image: pencil,
+
+
+export class OneRow implements IField {
+    component: string = "TextField"
+    options: QuestionText = {
+        id: uuidv4(),
+        isOneRow: true,
+        isRequired: false,
+        question: '',
+        type: 'text',
+        image: pencil,
     }
-    
 }
 
-export const multiRow: IField = {
-    component: 'TextField',
-    options: {
-    id: uuidv4(),
-    isOneRow: false,
-    isRequired: false,
-    question: '',
-    type: 'text',
-    image: lines,
+
+
+export class MultiRow implements IField {
+    component: string = "TextField"
+    options: QuestionText = {
+        id: uuidv4(),
+        isOneRow: false,
+        isRequired: false,
+        question: '',
+        type: 'text',
+        image: lines,
     }
-    
 }
 
-export const radio: IField = {
-    component: 'SelectField',
-    options: {
-    id: uuidv4(),
-    isRequired: false,
-    question: '',
-    type: 'select',
-    options: [''],
-    image: singleSelect,
-    isMultiSelect: false,
+
+
+export class Radio implements IField {
+    component: string = "SelectField"
+    options: QuestionSelect = {
+        id: uuidv4(),
+        isRequired: false,
+        question: '',
+        type: 'select',
+        options: [''],
+        isMultiSelect: false,
+        image: singleSelect,
     }
-    
 }
 
-export const checkbox: IField = {
-    component: 'SelectField',
-    options: {
-    id: uuidv4(),
-    isRequired: false,
-    question: '',
-    type: 'select',
-    options: [],
-    image: multiSelect,
-    isMultiSelect: true,
+
+
+
+export class Checkbox implements IField {
+    component: string = "SelectField"
+    options: QuestionSelect = {
+        id: uuidv4(),
+        isRequired: false,
+        question: '',
+        type: 'select',
+        options: [''],
+        isMultiSelect: true,
+        image: multiSelect,
     }
-
 }
-
 
 
 

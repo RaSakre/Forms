@@ -12,26 +12,26 @@
                         <div v-if="question.options.isRequired" class="required"></div>
                     </span>
                     <template v-if="question.options.type === 'text' && question.options.isOneRow">
-                        <Input v-model="answers.inputAnswer" :variant="'gray'" type="text" />
+                        <Input @update:modelValue="(value:string) => addAnswer(value, question)" v-model="inputAnswer" :key="question.options.id"  :variant="'gray'" type="text" />
                     </template>
 
                     <template v-else-if="question.options.type === 'text' && !question.options.isOneRow">
-                        <textarea v-model="answers.textareaAnswer" class="form-textarea" rows="3"></textarea>
+                        <textarea @input="addAnswer($event.target?.value, question)" v-model="textAreaAnswer" class="form-textarea" rows="3"></textarea>
                     </template>
 
                     <template v-else-if="question.options.type === 'select' && !question.options.isMultiSelect">
                         <div class="options-wrapper">
-                            <div v-for="option in question.options.options" :key="question.options.id" class="option-wrapper">
-                                <Input v-model="answers.radioAnswer" :value="option" :type="'radio'"
-                                    :name="`question-${index}`" />
+                            <div v-for="option in question.options.options" :key="option" class="option-wrapper">
+                                <Radio @update:modelValue="(value:string) => addAnswer(value, question)" v-model="radioAnswer" :value="option" :name="`option-${index}`"  />
                                 <span>{{ option }}</span>
                             </div>
                         </div>
                     </template>
 
                     <template v-else-if="question.options.type === 'select' && question.options.isMultiSelect">
-                        <div v-for="option in question.options.options" :key="question.options.id" class="option-wrapper">
-                            <Input :type="'checkbox'" :value="option" />
+                        <div v-for="option in question.options.options" :key="question.options.id"
+                            class="option-wrapper">
+                            <Checkbox @update:modelValue="(value:string) => addAnswer(value, question)" v-model="checkboxAnswer" :value="option" :name="`option-${index}`" />
                             <span>{{ option }}</span>
                         </div>
                     </template>
@@ -57,7 +57,10 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Input from '@/components/UI/Input.vue'
 import Button from '@/components/UI/Button.vue'
-import FormUniversal from '@/components/FormUniversal.vue'
+import Radio from '@/components/UI/Radio.vue'
+import Checkbox from '@/components/UI/Checkbox.vue'
+import type { IField } from '@/types/formTypes'
+
 
 const route = useRoute()
 const formStore = useFormsStore()
@@ -67,40 +70,21 @@ const currentForm = computed(() => {
     return formStore.forms.find((form) => form.id === String(route.params.id))
 })
 
+
 const inputAnswer = ref<string>('')
-const textareaAnswer = ref<string>('')
+const textAreaAnswer = ref<string>('')
 const radioAnswer = ref<string>('')
-const checkboxAnswer = ref<string[]>([])
+const checkboxAnswer = ref<string>('')
 
-const answers = ref<Record<string, string | string[]>>({
-    inputAnswer: inputAnswer.value,
-    textareaAnswer: textareaAnswer.value,
-    radioAnswer: radioAnswer.value,
-    checkboxAnswer: checkboxAnswer.value,
-})
-
-watch(answers.value, (newVal) => {
-    console.log(newVal)
-    currentForm.value?.fields.forEach((question) => {
-        switch (question.options.type) {
-            case 'text':
-                if (question.options.isOneRow) {
-                    question.options.answer = newVal.inputAnswer
-                } else {
-                    question.options.answer = newVal.textareaAnswer
-                }
-                break
-            case 'select':
-                if (question.options.isMultiSelect) {
-                    question.options.answer = newVal.checkboxAnswer
-                } else {
-                    question.options.answer = newVal.radioAnswer
-                }
-                break
+const addAnswer = (value:string, question:IField): void => {
+    question.options.answer = value
+    if (question.options.type === 'select' && question.options.isMultiSelect) {
+        if(!Array.isArray(question.options.answer)) {
+            question.options.answer = []
         }
-    })
-})
-
+        question.options.answer.push(value) // ???
+    }
+}
 
 const onSubmit = (): void => {
 

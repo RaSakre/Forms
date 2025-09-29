@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Input from '../UI/Input.vue';
-import type { QuestionSelect, Form, IForm } from '@/types/formTypes';
+import type { QuestionSelect, IForm } from '@/types/formTypes';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 

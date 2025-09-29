@@ -1,12 +1,14 @@
 import type { FieldValue } from "firebase/firestore";
 
-export interface Form  {
-    id?: string;
-    name: string;
-    description: string;
-    questions: Array<QuestionText | QuestionSelect>;
-    createdAt?: FieldValue;
-}
+// export interface Form  {
+//     id?: string;
+//     name: string;
+//     description: string;
+//     questions: Array<QuestionText | QuestionSelect>;
+//     createdAt?: FieldValue;
+// }
+
+
 
 export interface IForm {
     id?: string;
@@ -29,7 +31,7 @@ export interface QuestionBase  {
     question: string;
     isRequired: boolean;
     image: string;
-    answer?: string[] | string;
+    answer?: string | string[];
 }
 
 export interface QuestionText extends QuestionBase {

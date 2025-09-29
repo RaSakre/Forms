@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { Form, IForm } from "@/types/formTypes";
+import type {  IForm } from "@/types/formTypes";
 import { ref } from "vue";
 import { db } from "../../firebase.ts";
 import {
@@ -37,18 +37,27 @@ export const useFormsStore = defineStore("forms", () => {
     if (unsubscribe) unsubscribe();
   };
 
-  const addForm = async (form: IForm) => {
-    try {
-      isLoading.value = true;
-      const docRef = await addDoc(collection(db, "forms"), form);
-      currentEditingFormId.value = docRef.id;
-      return docRef.id;
-    } catch (error) {
-      console.log(error);
-    } finally {
-      isLoading.value = false;
-    }
-  };
+const addForm = async (form: IForm) => {
+  try {
+    isLoading.value = true;
+    // Преобразуем форму в простой объект
+    const formData = {
+      ...form,
+      fields: form.fields.map(field => ({
+        component: field.component,
+        options: { ...field.options } // создаем копию объекта options
+      }))
+    };
+    
+    const docRef = await addDoc(collection(db, "forms"), formData);
+    currentEditingFormId.value = docRef.id;
+    return docRef.id;
+  } catch (error) {
+    console.log(error);
+  } finally {
+    isLoading.value = false;
+  }
+};
 
   const clearEditingForm = () => {
     currentEditingFormId.value = null;
