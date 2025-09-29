@@ -5,8 +5,6 @@ import lines from '@/assets/constructor/constructor-lines.svg';
 import singleSelect from '@/assets/constructor/constructor-check.svg'
 import multiSelect from '@/assets/constructor/constructor-plus.svg'
 
-
-
 export class OneRow implements IField {
     component: string = "TextField"
     options: QuestionText = {
@@ -15,11 +13,9 @@ export class OneRow implements IField {
         isRequired: false,
         question: '',
         type: 'text',
-        image: pencil,
+        icon: 'pencil',
     }
 }
-
-
 
 export class MultiRow implements IField {
     component: string = "TextField"
@@ -29,11 +25,9 @@ export class MultiRow implements IField {
         isRequired: false,
         question: '',
         type: 'text',
-        image: lines,
+        icon: lines,
     }
 }
-
-
 
 export class Radio implements IField {
     component: string = "SelectField"
@@ -44,12 +38,9 @@ export class Radio implements IField {
         type: 'select',
         options: [''],
         isMultiSelect: false,
-        image: singleSelect,
+        icon: singleSelect,
     }
 }
-
-
-
 
 export class Checkbox implements IField {
     component: string = "SelectField"
@@ -60,7 +51,7 @@ export class Checkbox implements IField {
         type: 'select',
         options: [''],
         isMultiSelect: true,
-        image: multiSelect,
+        icon: multiSelect,
     }
 }
 

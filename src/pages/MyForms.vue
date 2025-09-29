@@ -19,11 +19,10 @@
   </div>
 </template>
 <script setup lang="ts">
-  import Input from '@/components/UI/Input.vue';
   import FormsList from '@/components/MyForms/FormsList.vue';
 
   import {useFormsStore} from '@/store/forms';
-  import {ref, onMounted, computed} from 'vue';
+  import {ref, computed} from 'vue';
   import type {IForm} from '@/types/formTypes';
 
   const formsStore = useFormsStore();

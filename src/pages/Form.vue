@@ -73,8 +73,6 @@
   import {useFormsStore} from '@/store/forms';
   import {computed, ref, watch} from 'vue';
   import {useRoute} from 'vue-router';
-  import Input from '@/components/UI/Input.vue';
-  import Button from '@/components/UI/Button.vue';
   import Radio from '@/components/UI/Radio.vue';
   import Checkbox from '@/components/UI/Checkbox.vue';
   import type {IField} from '@/types/formTypes';

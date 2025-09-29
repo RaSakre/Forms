@@ -17,7 +17,7 @@
         <Button :text="'Зарегистрироваться'" :variant="'orange'" />
       </form> -->
       <Form :onSubmit="register" :model="model" :rules="validationRules" v-slot="{errors}">
-        <FormField label="Имя" :error="errors.name">
+        <FormField :error="errors.name">
           <Input v-model="model.name" placeholder="Имя" variant="gray" :image="userIcon" />
         </FormField>
         <FormField label="Фамилия" :error="errors.surname">
@@ -50,10 +50,6 @@
   </div>
 </template>
 <script setup lang="ts">
-  import Form from '../UI/Form.vue';
-  import FormField from '../UI/FormField.vue';
-  import Input from '../UI/Input.vue';
-  import Button from '../UI/Button.vue';
   import emailIcon from '../../assets/auth/email.svg';
   import passwordIcon from '../../assets/auth/lock.svg';
   import userIcon from '../../assets/auth/user.svg';

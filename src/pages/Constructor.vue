@@ -114,7 +114,6 @@
   </div>
 </template>
 <script setup lang="ts">
-  import Input from '@/components/UI/Input.vue';
   import Popup from '@/components/UI/Popup.vue';
   import {OneRow, MultiRow, Checkbox, Radio} from '@/fields-objects/objects';
   import {serverTimestamp} from 'firebase/firestore';

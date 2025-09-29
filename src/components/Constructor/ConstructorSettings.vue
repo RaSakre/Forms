@@ -38,7 +38,12 @@
           :text="'Сохранить изменённую форму'"
           @click.prevent="emit('on-save', formId)"
           :img="saveIcon" />
-        <Button v-else :variant="'white'" :text="'Сохранить форму'" type="submit" :img="saveIcon" />
+        <Button
+          v-else
+          :variant="'white'"
+          :text="'Сохранить форму'"
+          @click.prevent="emit('on-save', formId)"
+          :img="saveIcon" />
         <router-link v-if="formId" :to="`/form/${formId}`">
           <Button style="width: 100%" :variant="'gray'" :text="'Просмотр'" />
         </router-link>

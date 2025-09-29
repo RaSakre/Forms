@@ -6,7 +6,7 @@
     </router-link>
     <div class="form-buttons">
       <button class="form-button">
-        <img :src="msgs" alt="" />
+        <Icon name="inbox" color="primary" />
       </button>
       <router-link
         class="form-button"
@@ -17,11 +17,11 @@
           },
         }">
         <button>
-          <img :src="pen" alt="" />
+          <Icon name="pencil" color="primary" />
         </button>
       </router-link>
       <button @click="deleteForm(form.id)" class="form-button">
-        <img :src="thrash" alt="" />
+        <Icon name="trash" color="error" />
       </button>
     </div>
   </li>
@@ -30,9 +30,6 @@
 <script setup lang="ts">
   import type {IForm} from '@/types/formTypes';
   import {type PropType} from 'vue';
-  import msgs from '@/assets/index-msgs.svg';
-  import pen from '@/assets/index-pen.svg';
-  import thrash from '@/assets/index-thrash.svg';
   import {useFormsStore} from '@/store/forms';
 
   const props = defineProps({

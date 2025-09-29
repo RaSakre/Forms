@@ -30,7 +30,7 @@ export interface QuestionBase  {
     type: QuestionType;
     question: string;
     isRequired: boolean;
-    image: string;
+    icon: string;
     answer?: string | string[];
 }
 
