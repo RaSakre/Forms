@@ -13,14 +13,14 @@ import {
 
 export const useFormsStore = defineStore("forms", () => {
   const forms = ref<IForm[]>([]);
-  const allForms = ref<IForm[]>([]);
   const isLoading = ref<boolean>(false);
   const currentEditingFormId = ref<string | null>(null);
   let unsubscribe: () => void;
 
   const initRealtimeListener = () => {
     if (unsubscribe) unsubscribe();
-
+    
+    isLoading.value = true;
     unsubscribe = onSnapshot(collection(db, "forms"), (snapshot) => {
       forms.value = snapshot.docs.map(
         (doc) =>
@@ -29,8 +29,8 @@ export const useFormsStore = defineStore("forms", () => {
             ...doc.data(),
           } as IForm)
       );
-      allForms.value = forms.value;
     });
+    isLoading.value = false;
   };
 
   const stopRealtimeUpdates = () => {
@@ -67,14 +67,14 @@ const addForm = async (form: IForm) => {
     await deleteDoc(doc(db, "forms", id));
   };
 
-  const findForm = (input: string) => {
-    forms.value = forms.value.filter((form) =>
-      form.name.toLowerCase().includes(input.toLowerCase())
-    );
-    if (input === "") {
-      forms.value = allForms.value;
-    }
-  };
+  // const findForm = (input: string) => {
+  //   forms.value = forms.value.filter((form) =>
+  //     form.name.toLowerCase().includes(input.toLowerCase())
+  //   );
+  //   if (input === "") {
+  //     forms.value = allForms.value;
+  //   }
+  // };
 
   const editForm = async (form: IForm) => {
     const storeForm = forms.value.find((f) => f.id === form.id);
@@ -98,45 +98,45 @@ const addForm = async (form: IForm) => {
     }
   };
 
-const sortByValue = (val: string) => {
-  switch (val) {
-    case 'new': {
-      forms.value = forms.value.sort((a, b) => {
-        if (a && b && a.createdAt && b.createdAt) {
-          return a.createdAt < b.createdAt ? 1 : -1;
-        }
-        return 0
-      })
-    }
-    break
-    case 'old': {
-      forms.value = forms.value.sort((a, b) => {
-        if (a && b && a.createdAt && b.createdAt) {
-          return a.createdAt > b.createdAt ? 1 : -1;
-        } return 0
-    })
-  }
-  break
-    case 'a-z': {
-      forms.value = forms.value.sort((a, b) => {
-        if(a && b ) {
-          return a.name.localeCompare(b.name)
-        }
-        return 0
-      })
-    }
-    break
-    case 'z-a': {
-      forms.value = forms.value.sort((a, b) => {
-        if(a && b ) {
-          return b.name.localeCompare(a.name)
-        }
-        return 0
-      })
-    }
-    break
-    }
-}
+// const sortByValue = (val: string) => {
+//   switch (val) {
+//     case 'new': {
+//       forms.value = forms.value.sort((a, b) => {
+//         if (a && b && a.createdAt && b.createdAt) {
+//           return a.createdAt < b.createdAt ? 1 : -1;
+//         }
+//         return 0
+//       })
+//     }
+//     break
+//     case 'old': {
+//       forms.value = forms.value.sort((a, b) => {
+//         if (a && b && a.createdAt && b.createdAt) {
+//           return a.createdAt > b.createdAt ? 1 : -1;
+//         } return 0
+//     })
+//   }
+//   break
+//     case 'a-z': {
+//       forms.value = forms.value.sort((a, b) => {
+//         if(a && b ) {
+//           return a.name.localeCompare(b.name)
+//         }
+//         return 0
+//       })
+//     }
+//     break
+//     case 'z-a': {
+//       forms.value = forms.value.sort((a, b) => {
+//         if(a && b ) {
+//           return b.name.localeCompare(a.name)
+//         }
+//         return 0
+//       })
+//     }
+//     break
+//     }
+// }
 
   return {
     forms,
@@ -147,9 +147,6 @@ const sortByValue = (val: string) => {
     isLoading,
     currentEditingFormId,
     clearEditingForm,
-    findForm,
-    allForms,
     editForm,
-    sortByValue
   };
 });

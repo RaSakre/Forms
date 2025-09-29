@@ -11,7 +11,7 @@ import type { FieldValue } from "firebase/firestore";
 
 
 export interface IForm {
-    id?: string;
+    id: string;
     name: string;
     description: string;
     fields: IField[];
