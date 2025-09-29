@@ -25,12 +25,7 @@
                         <button class="form-button">
                             <img :src="msgs" alt="">
                         </button>
-                        <router-link class="form-button" :to="{
-                            name: 'constructor',
-                            params: {
-                                formId: form.id
-                            }
-                        }">
+                        <router-link class="form-button" :to="`/constructor/${form.id}`">
                             <button>
                                 <img :src="pen" alt="">
                             </button>
@@ -41,7 +36,7 @@
                     </div>
                 </li>
             </ul>
-            <p style="font-size: 20px;" v-else>Формы не найдены</p>
+            <!-- <p style="font-size: 20px;" v-else>Формы не найдены</p> -->
         </div>
     </div>
 </template>
