@@ -12,33 +12,42 @@
                         <div v-if="question.options.isRequired" class="required"></div>
                     </span>
                     <template v-if="question.options.type === 'text' && question.options.isOneRow">
-                        <Input @update:modelValue="(value:string) => addAnswer(value, question)" v-model="inputAnswer" :key="question.options.id"  :variant="'gray'" type="text" />
+                        <Input @update:modelValue="(value: string) => {
+                            addAnswer(value, question);
+                            
+                        }" v-model="inputAnswer" :key="question.options.id" :variant="'gray'" type="text" />
+                        <span v-if="isError" class="error">{{ errorText }}</span>
                     </template>
 
                     <template v-else-if="question.options.type === 'text' && !question.options.isOneRow">
-                        <textarea @input="addAnswer($event.target?.value, question)" v-model="textAreaAnswer" class="form-textarea" rows="3"></textarea>
+                        <textarea @input="addAnswer($event.target?.value, question)" v-model="textAreaAnswer"
+                            class="form-textarea" rows="3"></textarea>
                     </template>
 
                     <template v-else-if="question.options.type === 'select' && !question.options.isMultiSelect">
                         <div class="options-wrapper">
                             <div v-for="option in question.options.options" :key="option" class="option-wrapper">
-                                <Radio @update:modelValue="(value:string) => addAnswer(value, question)" v-model="radioAnswer" :value="option" :name="`option-${index}`"  />
+                                <Radio @update:modelValue="(value: string) => addAnswer(value, question)"
+                                    v-model="radioAnswer" :value="option" :name="`option-${index}`" />
                                 <span>{{ option }}</span>
+                                
                             </div>
                         </div>
+                        <div class="error" v-if="isError">{{ errorText }}</div>
                     </template>
 
                     <template v-else-if="question.options.type === 'select' && question.options.isMultiSelect">
                         <div v-for="option in question.options.options" :key="question.options.id"
                             class="option-wrapper">
-                            <Checkbox @update:modelValue="(value:string) => addAnswer(value, question)" v-model="checkboxAnswer" :value="option" :name="`option-${index}`" />
+                            <Checkbox @update:modelValue="(value: string) => addAnswer(value, question)"
+                                v-model="checkboxAnswer" :value="option" :name="`option-${index}`" />
                             <span>{{ option }}</span>
                         </div>
                     </template>
                 </label>
             </div>
             <div class="form-buttons">
-                <Button type="submit" :text="'Отправить форму'" :variant="'orange'" />
+                <Button  type="submit" :text="'Отправить форму'" :variant="'orange'" />
                 <router-link :to="{
                     name: 'constructor',
                     params: { formId: currentForm?.id },
@@ -65,6 +74,8 @@ import type { IField } from '@/types/formTypes'
 const route = useRoute()
 const formStore = useFormsStore()
 
+const errorText = ref<string>('')
+const isError = ref<boolean>(true)
 
 const currentForm = computed(() => {
     return formStore.forms.find((form) => form.id === String(route.params.id))
@@ -76,18 +87,36 @@ const textAreaAnswer = ref<string>('')
 const radioAnswer = ref<string>('')
 const checkboxAnswer = ref<string>('')
 
-const addAnswer = (value:string, question:IField): void => {
+const addAnswer = (value: string, question: IField): void => {
     question.options.answer = value
     if (question.options.type === 'select' && question.options.isMultiSelect) {
-        if(!Array.isArray(question.options.answer)) {
+        if (!Array.isArray(question.options.answer)) {
             question.options.answer = []
         }
         question.options.answer.push(value) // ???
     }
 }
 
-const onSubmit = (): void => {
 
+
+const validateForm = () => {
+    if (currentForm.value) {
+        currentForm.value.fields.forEach((field) => {
+            if ((field.options.isRequired && field.options.answer === '' || field.options.answer === undefined)) {
+                isError.value = true
+                errorText.value = 'Это поле обязательно для заполнения'
+            } else {
+                isError.value = false
+                errorText.value = ''
+            }
+        })
+    }
+}
+
+
+
+const onSubmit = (): void => {
+    validateForm()
 }
 </script>
 <style scoped>
@@ -156,6 +185,13 @@ const onSubmit = (): void => {
     background: rgb(91 87 87 / 40%);
     border-radius: 10px;
     padding: 10px;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
 }
 
 
