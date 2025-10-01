@@ -1,4 +1,5 @@
 <template>
+
   <div class="form-wrapper">
     <div v-if="currentForm" class="form-text">
       <h2 class="form-title">{{ currentForm.name }}</h2>
@@ -50,6 +51,63 @@
                 :value="option"
                 :name="`option-${index}`" />
               <span>{{ option }}</span>
+
+    <div class="form-wrapper">
+        <div v-if="currentForm" class="form-text">
+            <h2 class="form-title">{{ currentForm.name }}</h2>
+            <p class="form-description">{{ currentForm.description }}</p>
+        </div>
+
+        <form @submit.prevent="onSubmit" class="form">
+            <div v-for="(question, index) in currentForm?.fields" :key="question.options.id" class="question-wrapper">
+                <label class="label-form">
+                    <span class="question-title">{{ question.options.question }}
+                        <div v-if="question.options.isRequired" class="required"></div>
+                    </span>
+                    <template v-if="question.options.type === 'text' && question.options.isOneRow">
+                        <Input @update:modelValue="(value: string) => {
+                            addAnswer(value, question);
+                            
+                        }" v-model="inputAnswer" :key="question.options.id" :variant="'gray'" type="text" />
+                        <span v-if="isError" class="error">{{ errorText }}</span>
+                    </template>
+
+                    <template v-else-if="question.options.type === 'text' && !question.options.isOneRow">
+                        <textarea @input="addAnswer($event.target?.value, question)" v-model="textAreaAnswer"
+                            class="form-textarea" rows="3"></textarea>
+                    </template>
+
+                    <template v-else-if="question.options.type === 'select' && !question.options.isMultiSelect">
+                        <div class="options-wrapper">
+                            <div v-for="option in question.options.options" :key="option" class="option-wrapper">
+                                <Radio @update:modelValue="(value: string) => addAnswer(value, question)"
+                                    v-model="radioAnswer" :value="option" :name="`option-${index}`" />
+                                <span>{{ option }}</span>
+                                
+                            </div>
+                        </div>
+                        <div class="error" v-if="isError">{{ errorText }}</div>
+                    </template>
+
+                    <template v-else-if="question.options.type === 'select' && question.options.isMultiSelect">
+                        <div v-for="option in question.options.options" :key="question.options.id"
+                            class="option-wrapper">
+                            <Checkbox @update:modelValue="(value: string) => addAnswer(value, question)"
+                                v-model="checkboxAnswer" :value="option" :name="`option-${index}`" />
+                            <span>{{ option }}</span>
+                        </div>
+                    </template>
+                </label>
+            </div>
+            <div class="form-buttons">
+                <Button  type="submit" :text="'Отправить форму'" :variant="'orange'" />
+                <router-link :to="{
+                    name: 'constructor',
+                    params: { formId: currentForm?.id },
+                }">
+                    <Button :text="'Редактировать форму'" :variant="'orange'" />
+                </router-link>
+
             </div>
           </template>
         </label>
@@ -69,6 +127,7 @@
 </template>
 
 <script setup lang="ts">
+
   // нужна переменная которая будет отслеживать заполнил ли я инпуты у которых поле isRequired = true
   import {useFormsStore} from '@/store/forms';
   import {computed, ref, watch} from 'vue';
@@ -123,12 +182,72 @@
         question.options.answer = question.options.answer.filter((item) => item !== value);
       }
       return; // ???
+
+// нужна переменная которая будет отслеживать заполнил ли я инпуты у которых поле isRequired = true
+import { useFormsStore } from '@/store/forms'
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import Input from '@/components/UI/Input.vue'
+import Button from '@/components/UI/Button.vue'
+import Radio from '@/components/UI/Radio.vue'
+import Checkbox from '@/components/UI/Checkbox.vue'
+import type { IField } from '@/types/formTypes'
+
+
+const route = useRoute()
+const formStore = useFormsStore()
+
+const errorText = ref<string>('')
+const isError = ref<boolean>(true)
+
+const currentForm = computed(() => {
+    return formStore.forms.find((form) => form.id === String(route.params.id))
+})
+
+
+const inputAnswer = ref<string>('')
+const textAreaAnswer = ref<string>('')
+const radioAnswer = ref<string>('')
+const checkboxAnswer = ref<string>('')
+
+const addAnswer = (value: string, question: IField): void => {
+    question.options.answer = value
+    if (question.options.type === 'select' && question.options.isMultiSelect) {
+        if (!Array.isArray(question.options.answer)) {
+            question.options.answer = []
+        }
+        question.options.answer.push(value) // ???
+
     }
+
 
     question.options.answer = value;
   };
 
   const onSubmit = (): void => {};
+
+
+
+const validateForm = () => {
+    if (currentForm.value) {
+        currentForm.value.fields.forEach((field) => {
+            if ((field.options.isRequired && field.options.answer === '' || field.options.answer === undefined)) {
+                isError.value = true
+                errorText.value = 'Это поле обязательно для заполнения'
+            } else {
+                isError.value = false
+                errorText.value = ''
+            }
+        })
+    }
+}
+
+
+
+const onSubmit = (): void => {
+    validateForm()
+}
+
 </script>
 <style scoped>
   .form-wrapper {
@@ -196,7 +315,20 @@
     background: rgb(91 87 87 / 40%);
     border-radius: 10px;
     padding: 10px;
+
   }
+
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}
+
+
+
 
   /* .question-title::before {
         content: '';

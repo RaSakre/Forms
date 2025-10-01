@@ -9,6 +9,7 @@ import {
   onSnapshot,
   doc,
   updateDoc,
+  getDocs,
 } from "firebase/firestore";
 
 export const useFormsStore = defineStore("forms", () => {
@@ -17,10 +18,24 @@ export const useFormsStore = defineStore("forms", () => {
   const currentEditingFormId = ref<string | null>(null);
   let unsubscribe: () => void;
 
-  const initRealtimeListener = () => {
+  const initRealtimeListener = async () => {
     if (unsubscribe) unsubscribe();
+
     
     isLoading.value = true;
+
+
+   try {
+    isLoading.value = true;
+    const querySnapshot = await getDocs(collection(db, "forms"));
+    forms.value = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        } as IForm)
+    );
+
     unsubscribe = onSnapshot(collection(db, "forms"), (snapshot) => {
       forms.value = snapshot.docs.map(
         (doc) =>
@@ -31,11 +46,29 @@ export const useFormsStore = defineStore("forms", () => {
       );
     });
     isLoading.value = false;
+
   };
 
-  const stopRealtimeUpdates = () => {
-    if (unsubscribe) unsubscribe();
+   } catch (error) {
+    console.log(error);
+   }
+
+
+    // unsubscribe = onSnapshot(collection(db, "forms"), (snapshot) => {
+    //   forms.value = snapshot.docs.map(
+    //     (doc) =>
+    //       ({
+    //         id: doc.id,
+    //         ...doc.data(),
+    //       } as IForm)
+    //   );
+    //   allForms.value = forms.value;
+    // });
   };
+
+  // const stopRealtimeUpdates = () => {
+  //   if (unsubscribe) unsubscribe();
+  // };
 
 const addForm = async (form: IForm) => {
   try {
@@ -142,7 +175,6 @@ const addForm = async (form: IForm) => {
     forms,
     addForm,
     initRealtimeListener,
-    stopRealtimeUpdates,
     deleteForm,
     isLoading,
     currentEditingFormId,

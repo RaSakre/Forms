@@ -1,6 +1,7 @@
 <template>
   <div class="main">
     <div class="container">
+
       <button @click="router.push('/')" class="back-btn">
         Назад
         <img src="../assets/constructor/constructor-arrow-back.svg" alt="" />
@@ -9,6 +10,16 @@
       <div class="hero-section">
         <div class="hero-section__left">
           <!-- <div class="hero-section__constructor">
+
+      <div class="hero-section">
+        <div class="hero-section__left">
+          <button @click="router.push('/')" class="back-btn">
+            Назад
+            <img src="../assets/constructor/constructor-arrow-back.svg" alt="" />
+          </button>
+          <h1 class="hero-section__title">Создание формы</h1>
+          <div class="hero-section__constructor">
+
             <div class="constructor-tabs">
               <div class="tabs-item">
                 <img src="../assets/constructor/constructor-house.svg" alt="" />
@@ -20,7 +31,11 @@
               </div>
             </div>
             <h2 class="constructor-title">Элементы формы</h2>
+
             <form @submit.prevent="state.id ? editExistingForm() : saveForm()" class="constructor-form">
+
+            <form @submit.prevent="state.id ? editExistingForm() : saveForm()" action="" class="constructor-form">
+
               <ButtonConstructor
                 @addQuestion="addQuestion(new OneRow())"
                 :text="'Однострочный ответ'"
@@ -68,6 +83,7 @@
                 </div>
               </div>
             </form>
+
           </div> -->
           <ConstructorSettings
             :isEditing="!!state.id"
@@ -75,6 +91,8 @@
             @on-add-field="addQuestion"
             @on-delete-form="deleteForm"
             @on-save="saveForm" />
+
+          </div>
         </div>
         <div class="hero-section__right">
           <div class="hero-section__form-upper">
@@ -105,7 +123,20 @@
               placeholder="Описание"></textarea>
           </div>
           <div class="hero-section__form-lower">
+
             <ConstructorFieldsList :state="state" />
+
+            <TransitionGroup name="list" tag="div" class="form-lower">
+              <div v-for="question in state.fields" :key="question.options.id" class="form-lower__item">
+                <template v-if="question.options.type === 'text'">
+                  <TextField :question="question.options" :key="question.options.id" :state="state" />
+                </template>
+                <template v-else-if="question.options.type === 'select'">
+                  <SelectField :question="question.options" :key="question.options.id" :state="state" />
+                </template>
+              </div>
+            </TransitionGroup>
+
           </div>
         </div>
       </div>
@@ -114,12 +145,30 @@
   </div>
 </template>
 <script setup lang="ts">
+
   import Popup from '@/components/UI/Popup.vue';
   import {OneRow, MultiRow, Checkbox, Radio} from '@/fields-objects/objects';
   import {serverTimestamp} from 'firebase/firestore';
 
   import ConstructorSettings from '@/components/Constructor/ConstructorSettings.vue';
   import ConstructorFieldsList from '@/components/Constructor/ConstructorFieldsList.vue';
+
+  import Button from '@/components/UI/Button.vue';
+  import Input from '@/components/UI/Input.vue';
+  import Popup from '@/components/UI/Popup.vue';
+  import TextField from '@/components/fields/TextField.vue';
+  import SelectField from '@/components/fields/SelectField.vue';
+  import ButtonConstructor from '@/components/UI/ButtonConstructor.vue';
+  import {OneRow, MultiRow, Checkbox, Radio} from '@/fields-objects/objects';
+  import {serverTimestamp} from 'firebase/firestore';
+
+  import saveIcon from '@/assets/constructor/constructor-save.svg';
+  import lines from '@/assets/constructor/constructor-lines.svg';
+  import pencil from '@/assets/constructor/constructor-pen.svg';
+  import singleSelect from '@/assets/constructor/constructor-check.svg';
+  import multiSelect from '@/assets/constructor/constructor-plus.svg';
+  import deleteFormIcon from '@/assets/index-thrash.svg';
+
 
   import {computed, onMounted, ref, TransitionGroup, watch} from 'vue';
 
@@ -138,14 +187,21 @@
     name: '',
     description: '',
     fields: [],
+
     id: '',
+
+
   });
 
   const saveForm = async () => {
     if (state.value.name !== '' && state.value.description !== '' && state.value.fields.length > 0) {
       state.value.createdAt = serverTimestamp();
       const formId = await formsStore.addForm(state.value);
+
       state.value.id = formId as string;
+
+      state.value.id = formId;
+
       popupText.value = 'Форма сохранена';
       showPopup.value = true;
       setTimeout(() => {
@@ -173,7 +229,9 @@
       name: '',
       description: '',
       fields: [],
+
       id: '',
+
     };
     isDescriptionWritten.value = false;
     isNameWritten.value = false;
@@ -196,6 +254,7 @@
     return isEditingCurrentForm || isViewingSameForm;
   });
 
+
   onMounted(() => {
     formsStore.clearEditingForm();
     loadDataFromForm();
@@ -204,6 +263,11 @@
 
   const isNameWritten = ref<boolean>(false);
   const isDescriptionWritten = ref<boolean>(false);
+
+
+  const isNameWritten = ref<boolean>(false);
+  const isDescriptionWritten = ref<boolean>(false);
+
 
   const handleInputBlur = (): void => {
     if (state.value.name === '' && !isNameWritten.value) {
@@ -237,6 +301,7 @@
           state.value.fields.push(new Radio());
         }
         break;
+
     }
   };
 
@@ -260,10 +325,55 @@
 </script>
 
 <style>
+
+    }
+  };
+
+  const loadDataFromForm = () => {
+    if (route.params.formId) {
+      const form = formsStore.forms.find((form: IForm) => form.id === route.params.formId);
+
+      if (form) {
+        state.value = {...form};
+        isDescriptionWritten.value = true;
+        isNameWritten.value = true;
+      }
+    }
+  };
+
+//   watch(
+//     () => route.params.formId,
+//     () => {
+//       loadDataFromForm();
+//     }
+//   );
+
+  onMounted(async () => {
+    await formsStore.initRealtimeListener();
+    loadDataFromForm();
+  });
+</script>
+<style scoped>
+
   .main {
     position: relative;
     padding: 40px 0px;
   }
+
+
+
+
+  .list-enter-active,
+  .list-leave-active {
+    transition: all 0.5s ease;
+  }
+
+  .list-enter-from,
+  .list-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
 
   .hero-section {
     display: flex;
@@ -340,6 +450,16 @@
     flex-direction: column;
     gap: 30px;
   }
+
+
+
+  .constructor-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+  }
+
 
   .actions-buttons {
     display: flex;
