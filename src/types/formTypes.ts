@@ -11,7 +11,7 @@ import type { FieldValue } from "firebase/firestore";
 
 
 export interface IForm {
-    id?: string;
+    id: string;
     name: string;
     description: string;
     fields: IField[];
@@ -30,7 +30,7 @@ export interface QuestionBase  {
     type: QuestionType;
     question: string;
     isRequired: boolean;
-    image: string;
+    icon: string;
     answer?: string | string[];
 }
 

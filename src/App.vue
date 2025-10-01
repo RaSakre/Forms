@@ -18,7 +18,3 @@ onMounted(() => {
 <template>
 <Layout/>
 </template>
-
-<style scoped>
-
-</style>
