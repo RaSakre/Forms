@@ -9,16 +9,12 @@ onMounted(() => {
     formsStore.initRealtimeListener(); 
 });
 
-onUnmounted(() => {
-    formsStore.stopRealtimeUpdates(); 
-});
+// onUnmounted(() => {
+//     formsStore.stopRealtimeUpdates(); 
+// });
 
 </script>
 
 <template>
 <Layout/>
 </template>
-
-<style scoped>
-
-</style>

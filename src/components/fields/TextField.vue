@@ -2,7 +2,7 @@
     <Input v-model="question.question" :variant="'gray'" :placeholder="'Вопрос'" :type="'text'" />
     <div class="form-item-lower">
         <div class="form-item-lowerleft">
-            <img :src="question.image" alt="">
+            <Icon :name="question.icon" alt="" />
             <p v-if="question.type === 'text'">{{ question.isOneRow ? 'Однострочный ответ' : 'Многострочный ответ' }}</p>
         </div>
         <div class="form-item-lowerright">
@@ -18,10 +18,10 @@
 </template>
 <script setup lang='ts'>
 import type { QuestionText, Form, IForm } from '@/types/formTypes';
-import Input from '../UI/Input.vue';
 import { ref } from 'vue';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
+
 interface Props {
     question: QuestionText,
     state: IForm,

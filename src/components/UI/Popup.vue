@@ -1,27 +1,27 @@
 <template>
-    <transition name="popup">
-        <div v-if="show" class="popup">
-            <div class="popup-content">
-                <div class="popup-icon">✓</div>
-                <span class="popup-text">{{ text }}</span>
-            </div>
-        </div>
-    </transition>
+  <transition name="popup">
+    <div v-if="show" class="popup">
+      <div class="popup-content">
+        <div class="popup-icon">✓</div>
+        <span class="popup-text">{{ text }}</span>
+      </div>
+    </div>
+  </transition>
 </template>
 <script setup lang="ts">
-const props = defineProps({
+  const props = defineProps({
     show: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     text: {
-        type: String,
-        default: ''
-    }
-})
+      type: String,
+      default: '',
+    },
+  });
 </script>
 <style scoped>
-.popup {
+  .popup {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -35,15 +35,15 @@ const props = defineProps({
     align-items: center;
     gap: 12px;
     min-width: 200px;
-}
+  }
 
-.popup-content {
+  .popup-content {
     display: flex;
     align-items: center;
     gap: 12px;
-}
+  }
 
-.popup-icon {
+  .popup-icon {
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -54,37 +54,37 @@ const props = defineProps({
     justify-content: center;
     font-weight: bold;
     font-size: 14px;
-}
+  }
 
-.popup-text {
+  .popup-text {
     color: #1f2937;
     font-weight: 500;
     font-size: 14px;
-}
+  }
 
-/* Анимации появления/исчезания */
-.popup-enter-active,
-.popup-leave-active {
+  /* Анимации появления/исчезания */
+  .popup-enter-active,
+  .popup-leave-active {
     transition: all 0.3s ease;
-}
+  }
 
-.popup-enter-from {
+  .popup-enter-from {
     opacity: 0;
     transform: translateX(100px);
-}
+  }
 
-.popup-enter-to {
+  .popup-enter-to {
     opacity: 1;
     transform: translateX(0);
-}
+  }
 
-.popup-leave-from {
+  .popup-leave-from {
     opacity: 1;
     transform: translateX(0);
-}
+  }
 
-.popup-leave-to {
+  .popup-leave-to {
     opacity: 0;
     transform: translateX(100px);
-}
+  }
 </style>
