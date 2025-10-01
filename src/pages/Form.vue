@@ -14,7 +14,6 @@
                     <template v-if="question.options.type === 'text' && question.options.isOneRow">
                         <Input @update:modelValue="(value: string) => {
                             addAnswer(value, question);
-                            
                         }" v-model="inputAnswer" :key="question.options.id" :variant="'gray'" type="text" />
                         <span v-if="isError" class="error">{{ errorText }}</span>
                     </template>
