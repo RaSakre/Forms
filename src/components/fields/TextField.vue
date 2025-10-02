@@ -17,7 +17,7 @@
     </div>
 </template>
 <script setup lang='ts'>
-import type { QuestionText, Form, IForm } from '@/types/formTypes';
+import type { QuestionText,  IForm } from '@/types/formTypes';
 import { ref } from 'vue';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
@@ -93,7 +93,7 @@ const deleteQuestion = (id: string): void => {
 
 .form-item-lowerleft {
     display: flex;
-    gap: 5px;
+    gap: 10px;
 }
 
 .form-item-lowerleft img {

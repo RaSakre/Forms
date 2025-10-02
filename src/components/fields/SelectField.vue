@@ -1,7 +1,7 @@
 <template>
     <Input v-model="question.question" :variant="'gray'" :placeholder="'Вопрос'" :type="'text'" disabled />
     <Input v-for="(item, index) in question.options" :key="question.id"
-        :image="question.isMultiSelect ? selectSquare : selectCircle" :type="'text'" v-model="question.options[index]"
+        :icon="question.isMultiSelect ? selectSquare : selectCircle" :type="'text'" v-model="question.options[index]"
         :placeholder="`Вариант ${index + 1}`"
         :style="[question.options.length > 1 ? { 'width': '95%' } : { 'width': '100%' }]" :variant="'gray'">
     <img class="deleteSelect" @click="deleteSelectOption(question.id, index)" v-if="question.options.length > 1"
@@ -12,7 +12,7 @@
     </div>
     <div class="form-item-lower">
         <div class="form-item-lowerleft">
-            <img :src="question.image" alt="">
+            <Icon :name="question.icon"/>
             <p>{{ question.isMultiSelect ? 'Список множественного выбора' : 'Список одиночного выбора' }}</p>
         </div>
 
@@ -115,7 +115,7 @@ const deleteSelectOption = (id: string, index: number): void => {
 
 .form-item-lowerleft {
     display: flex;
-    gap: 5px;
+    gap: 10px;
 }
 
 .form-item-lowerleft img {

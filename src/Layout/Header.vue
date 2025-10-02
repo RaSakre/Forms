@@ -6,20 +6,23 @@
                     <h1 class="header__logo">Forms</h1>
                 </router-link>
                 <div class="header__right">
-                <nav>
-                    <ul class="header__menu-list">
-                        <li><router-link to="/" >Главная</router-link></li>
-                        <li><router-link to="/constructor">Новая форма</router-link></li>
-                        <li>Профиль</li>
-                    </ul>
-                </nav>
-                <div class="theme">
-                    <img src="../assets/Header/sun.svg" alt="">
-                    <p>Светлая тема</p>
-                </div>
-                <div class="header-exit">
-                    <img src="../assets/Header/exit.svg" alt="">
-                </div>
+                    <nav>
+                        <ul class="header__menu-list">
+                            <li><router-link to="/">Главная</router-link></li>
+                            <li><router-link to="/constructor">Новая форма</router-link></li>
+                            <li><router-link :to="authStore.isAuth ? '/profile' : '/login'">{{ authStore.isAuth ? 'Профиль' : 'Войти'}}</router-link></li>
+                        </ul>
+                    </nav>
+                    <div class="theme">
+                        <img src="../assets/Header/sun.svg" alt="">
+                        <p>Светлая тема</p>
+                    </div>
+                    <div class="header-user">
+                        <router-link to="/profile">
+                            <p v-if="authStore.isAuth">{{ authStore.userState.email }}</p>
+                        </router-link>
+                        <img v-if="authStore.isAuth" @click="logout" src="../assets/Header/exit.svg" alt="">
+                    </div>
                 </div>
             </div>
         </div>
@@ -27,8 +30,14 @@
 </template>
 <script setup>
 import { useRoute } from 'vue-router';
+import { useAuthStore } from '@/store/auth';
 const route = useRoute()
+const authStore = useAuthStore()
 const authRoutes = ['/login', '/register', '/forgot-password']
+
+const logout = () => {
+    authStore.logout()
+}
 </script>
 <style scoped>
 .header {
@@ -86,8 +95,21 @@ const authRoutes = ['/login', '/register', '/forgot-password']
     object-fit: cover;
 }
 
-.header-exit img {
+.header-user img {
+    position: relative;
+    top: 3px;
     width: 20px;
     object-fit: cover;
+    cursor: pointer;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-user a {
+    color: white;
 }
 </style>

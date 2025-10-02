@@ -2,36 +2,24 @@
   <div class="auth-wrapper">
     <div class="auth">
       <div class="auth-icon">
-        <img src="/src/assets/auth/login-icon.svg" alt="" />
+        <Icon :name="'replay'"/>
       </div>
       <div class="auth-text">
-        <h2 class="auth-title">Авторизация</h2>
-        <p>Войти с помощью почты</p>
+        <h2 class="auth-title">Сброс пароля</h2>
+        <p>Введите почту, на которую будет отправлено письмо для сброса пароля</p>
       </div>
-      <Form :onSubmit="login" :model="model" :rules="validationRules" v-slot="{errors}">
+      <Form :onSubmit="onSubmit" :model="model" :rules="validationRules" v-slot="{errors}">
         <FormField :error="errors.email">
           <Input v-model="model.email" placeholder="Введите почту" variant="gray" :icon="emailIcon" />
-        </FormField>
-        <FormField :error="errors.password">
-          <Input v-model="model.password" :type="'password'" placeholder="Введите пароль" variant="gray" :icon="passwordIcon" />
         </FormField>
 
         
         <div class="auth-footer">
-          <Button text="Войти" variant="orange" />
+          <Button text="Сбросить пароль" variant="orange" />
           <div class="auth-footerBtns">
-            <p>
-          Забыли пароль?
           <button class="auth-footerBtn">
-            <router-link to="/reset-password" >Восстановить</router-link>
+            <router-link to="login" >На страницу входа</router-link>
           </button>
-        </p>
-        <p>
-          Нет аккаунта?
-          <button class="auth-footerBtn">
-            <router-link to="/register" >Зарегистрироваться</router-link>
-          </button>
-        </p>
           </div>
         
       </div>
@@ -41,44 +29,27 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { useAuthStore } from '@/store/auth';
-  import Button from '../UI/Button.vue';
-  import emailIcon from '@/assets/auth/email.svg'
-  import passwordIcon from '@/assets/auth/lock.svg';
-  import {ref} from 'vue';
-  import {Validators} from '../../utils/validator';
-  import { useRouter } from 'vue-router';
-
-  const router = useRouter()
-
-  const authStore = useAuthStore()
-
-  interface ILoginModel {
+import { ref } from 'vue';
+import emailIcon from '@/assets/auth/email.svg'
+import { Validators } from '@/utils/validator';
+  interface IResetPassModel {
     email: string;
-    password: string;
   }
 
-  const model = ref<ILoginModel>({
+  const model = ref<IResetPassModel>({
     email: '',
-    password: '',
   });
 
-  const validationRules = {
+    const validationRules = {
     email: [Validators.required, Validators.email],
-    password: [Validators.required, Validators.minLength(6)],
   };
 
-  const login = () => {
-    authStore.login(model.value.email, model.value.password)
-    .then(() => {
-      if (authStore.userState) {
-        router.push('/')
-      }
-    })
-  };
+  const onSubmit = () => {
+    console.log('reset pass')
+  }
 </script>
 <style scoped>
-  .auth-wrapper {
+    .auth-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;

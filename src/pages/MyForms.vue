@@ -14,50 +14,8 @@
           <option value="z-a">Порядок Я-А</option>
         </select>
       </div>
-
       <FormsList :forms="sortedForms" />
-
-    <div class="container">
-        <h2 class="my-forms-title">Мои формы</h2>
-        <div class="my-forms">
-            <div class="filters-form">
-                <Input v-model="inputSearchForm" @update:modelValue="find(inputSearchForm)" class="search"
-                    :variant="'gray'" :type="'text'" :placeholder="'Найти'">
-                <img class="search-icon" src="../assets/search.svg" alt="">
-                </Input>
-                <select @change="sortBy" v-model="option" class="custom-select">
-                    <option value="new" selected>Сначала новые</option>
-                    <option value="old">Сначала старые</option>
-                    <option value="a-z">Порядок А-Я</option>
-                    <option value="z-a">Порядок Я-А</option>
-                </select>
-            </div>
-
-            <ul v-if="formsStore.forms.length" class="forms-list">
-                <li v-for="form in formsStore.forms" :key="form.id" class="form-item">
-                    <router-link class="form-link" :to='`/form/${form.id}`'>
-                        <h3 class="form-title">{{ form.name }}</h3>
-                        <p class="form-description">{{ form.description }}</p>
-                    </router-link>
-                    <div class="form-buttons">
-                        <button class="form-button">
-                            <img :src="msgs" alt="">
-                        </button>
-                        <router-link class="form-button" :to="`/constructor/${form.id}`">
-                            <button>
-                                <img :src="pen" alt="">
-                            </button>
-                        </router-link>
-                        <button @click="form.id ? formsStore.deleteForm(form.id) : ''" class="form-button">
-                            <img :src="thrash" alt="">
-                        </button>
-                    </div>
-                </li>
-            </ul>
-            <!-- <p style="font-size: 20px;" v-else>Формы не найдены</p> -->
-        </div>
-
-    </div>
+  </div>
   </div>
 </template>
 <script setup lang="ts">

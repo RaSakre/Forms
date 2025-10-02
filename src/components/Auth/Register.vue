@@ -8,26 +8,18 @@
         <h2 class="auth-title">Регистрация</h2>
         <p>Зарегистрироваться с помощью почты</p>
       </div>
-      <!-- <form class="register-form" action="">
-        <Input :type="'text'" :placeholder="'Имя'" :variant="'gray'" :image="userIcon" />
-        <Input :type="'text'" :placeholder="'Фамилия'" :variant="'gray'" :image="userIcon" />
-        <Input :type="'email'" :placeholder="'Введите почту'" :variant="'gray'" :image="emailIcon" />
-        <Input :type="'password'" :placeholder="'Введите пароль'" :variant="'gray'" :image="passwordIcon" />
-        <Input :type="'password'" :placeholder="'Повторите пароль'" :variant="'gray'" :image="passwordIcon" />
-        <Button :text="'Зарегистрироваться'" :variant="'orange'" />
-      </form> -->
       <Form :onSubmit="register" :model="model" :rules="validationRules" v-slot="{errors}">
-        <FormField :error="errors.name">
-          <Input v-model="model.name" placeholder="Имя" variant="gray" :image="userIcon" />
+        <FormField :error="errors.name" label="Имя">
+          <Input v-model="model.name" placeholder="Имя" variant="gray" :icon="userIcon" />
         </FormField>
         <FormField label="Фамилия" :error="errors.surname">
-          <Input v-model="model.surname" placeholder="Фамилия" variant="gray" :image="userIcon" />
+          <Input v-model="model.surname" placeholder="Фамилия" variant="gray" :icon="userIcon" />
         </FormField>
         <FormField label="Почта" :error="errors.email">
-          <Input v-model="model.email" placeholder="Введите почту" variant="gray" :image="emailIcon" />
+          <Input v-model="model.email" placeholder="Введите почту" variant="gray" :icon="emailIcon" />
         </FormField>
         <FormField label="Пароль" :error="errors.password">
-          <Input v-model="model.password" placeholder="Введите пароль" variant="gray" :image="passwordIcon" />
+          <Input v-model="model.password" placeholder="Введите пароль" :type="'password'" variant="gray" :icon="passwordIcon" />
         </FormField>
         <FormField label="Повторите пароль" :error="errors.confirmPassword">
           <Input
@@ -35,38 +27,40 @@
             v-model="model.confirmPassword"
             placeholder="Повторите пароль"
             variant="gray"
-            :image="passwordIcon" />
+            :icon="passwordIcon" />
         </FormField>
-        <Button text="Зарегистрироваться" variant="orange" />
+        <Button type="submit" style="width: 100%;" text="Зарегистрироваться" variant="orange" />
       </Form>
       <div class="register-footer">
-        <Button text="Очистить форму" variant="white" />
+        <Button @click.prevent="clearForm" text="Очистить форму" variant="white" />
         <p>
           Есть аккаунт?
-          <button class="auth-footerBtn">Войти</button>
+          <button class="auth-footerBtn">
+            <router-link to="/login">Войти</router-link>
+          </button>
         </p>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
+  import { useAuthStore } from '@/store/auth';
   import emailIcon from '../../assets/auth/email.svg';
   import passwordIcon from '../../assets/auth/lock.svg';
   import userIcon from '../../assets/auth/user.svg';
   import {ref} from 'vue';
   import {Validators} from '../../utils/validator';
+  import { useRouter } from 'vue-router';
+  import type { IRegisterModel } from '@/types/formTypes';
+
+  const router = useRouter()
+
+  const authStore = useAuthStore()
 
   const register = () => {
-    console.log('register');
+    authStore.register(model.value)
+    router.push('/login')
   };
-
-  interface IRegisterModel {
-    name: string;
-    surname: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }
 
   const model = ref<IRegisterModel>({
     name: '',
@@ -75,7 +69,6 @@
     password: '',
     confirmPassword: '',
   });
-
   const validationRules = {
     name: [Validators.required],
     surname: [Validators.required],
@@ -83,9 +76,22 @@
     password: [Validators.required, Validators.minLength(6)],
     confirmPassword: [Validators.required, Validators.minLength(6), Validators.sameAs('password')],
   };
+  const clearForm = () => {
+    model.value = {
+      name: '',
+      surname: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+  }
+}
 </script>
 
 <style scoped>
+  form {
+    margin-bottom: 20px;
+  }
+
   .auth-wrapper {
     display: flex;
     flex-direction: column;
@@ -143,6 +149,10 @@
     text-decoration: underline;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+  }
+
+  .auth-footerBtn a {
+    color: inherit;
   }
 
   .auth-footerBtn:hover {

@@ -1,7 +1,7 @@
 <template>
   <li class="form-item">
     <router-link class="form-link" :to="`/form/${form.id}`">
-      <h3 class="form-title">{{ form.name }}</h3>
+      <h3 class="form__title">{{ form.name }}</h3>
       <p class="form-description">{{ form.description }}</p>
     </router-link>
     <div class="form-buttons">
@@ -10,12 +10,7 @@
       </button>
       <router-link
         class="form-button"
-        :to="{
-          name: 'constructor',
-          params: {
-            formId: form.id,
-          },
-        }">
+        :to="`/constructor/${form.id}`">
         <button>
           <Icon name="pencil" color="primary" />
         </button>
@@ -31,7 +26,6 @@
   import type {IForm} from '@/types/formTypes';
   import {type PropType} from 'vue';
   import {useFormsStore} from '@/store/forms';
-
   const props = defineProps({
     form: {
       type: Object as PropType<IForm>,
@@ -59,10 +53,11 @@
     width: 20px;
   }
 
-  .form-title {
+  .form__title {
     font-size: 20px;
     font-weight: normal;
     padding: 10px 0px;
+    text-align: center;
   }
 
   .form-description {

@@ -1,60 +1,7 @@
 <template>
-
-  <div class="form-wrapper">
-    <div v-if="currentForm" class="form-text">
-      <h2 class="form-title">{{ currentForm.name }}</h2>
-      <p class="form-description">{{ currentForm.description }}</p>
-    </div>
-
-    <form @submit.prevent="onSubmit" class="form">
-      <div v-for="(question, index) in currentForm?.fields" :key="question.options.id" class="question-wrapper">
-        <label class="label-form">
-          <span class="question-title">
-            {{ question.options.question }}
-            <div v-if="question.options.isRequired" class="required"></div>
-          </span>
-          <template v-if="question.options.type === 'text' && question.options.isOneRow">
-            <Input
-              @update:modelValue="(value:string) => addAnswer(value, question)"
-              v-model="inputAnswer"
-              :key="question.options.id"
-              :variant="'gray'"
-              type="text" />
-          </template>
-
-          <template v-else-if="question.options.type === 'text' && !question.options.isOneRow">
-            <textarea
-              @input="addAnswer($event.target?.value, question)"
-              v-model="textAreaAnswer"
-              class="form-textarea"
-              rows="3"></textarea>
-          </template>
-
-          <template v-else-if="question.options.type === 'select' && !question.options.isMultiSelect">
-            <div class="options-wrapper">
-              <div v-for="option in question.options.options" :key="option" class="option-wrapper">
-                <Radio
-                  @update:modelValue="(value:string) => addAnswer(value, question)"
-                  v-model="radioAnswer"
-                  :value="option"
-                  :name="`option-${index}`" />
-                <span>{{ option }}</span>
-              </div>
-            </div>
-          </template>
-
-          <template v-else-if="question.options.type === 'select' && question.options.isMultiSelect">
-            <div v-for="option in question.options.options" :key="question.options.id" class="option-wrapper">
-              <Checkbox
-                @update:modelValue="(value:string) => addAnswer(value, question)"
-                v-model="checkboxAnswer"
-                :value="option"
-                :name="`option-${index}`" />
-              <span>{{ option }}</span>
-
-    <div class="form-wrapper">
+    <div v-if="!formSend" class="form-wrapper">
         <div v-if="currentForm" class="form-text">
-            <h2 class="form-title">{{ currentForm.name }}</h2>
+            <h2 class="form__title">{{ currentForm.name }}</h2>
             <p class="form-description">{{ currentForm.description }}</p>
         </div>
 
@@ -67,22 +14,26 @@
                     <template v-if="question.options.type === 'text' && question.options.isOneRow">
                         <Input @update:modelValue="(value: string) => {
                             addAnswer(value, question);
-                        }" v-model="inputAnswer" :key="question.options.id" :variant="'gray'" type="text" />
+                        }" v-model="question.options.answer" :key="question.options.id" :variant="'gray'" type="text"
+                            :placeholder="formStore.forms.find(form => form.id === currentForm?.id)?.answers?.[question.options.question]" />
                         <span v-if="isError" class="error">{{ errorText }}</span>
                     </template>
 
                     <template v-else-if="question.options.type === 'text' && !question.options.isOneRow">
-                        <textarea @input="addAnswer($event.target?.value, question)" v-model="textAreaAnswer"
+                        <textarea @input="addAnswer($event.target?.value, question)" v-model="question.options.answer"
+                            :placeholder="formStore.forms.find(form => form.id === currentForm?.id)?.answers?.[question.options.question]"
                             class="form-textarea" rows="3"></textarea>
+                        <span v-if="isError" class="error">{{ errorText }}</span>
                     </template>
 
                     <template v-else-if="question.options.type === 'select' && !question.options.isMultiSelect">
                         <div class="options-wrapper">
                             <div v-for="option in question.options.options" :key="option" class="option-wrapper">
                                 <Radio @update:modelValue="(value: string) => addAnswer(value, question)"
-                                    v-model="radioAnswer" :value="option" :name="`option-${index}`" />
+                                    v-model="radioAnswer" :value="option" :name="`option-${index}`"
+                                    :checked="formStore.forms.find(form => form.id === currentForm?.id)?.answers?.[question.options.question] === option" />
                                 <span>{{ option }}</span>
-                                
+
                             </div>
                         </div>
                         <div class="error" v-if="isError">{{ errorText }}</div>
@@ -99,190 +50,170 @@
                 </label>
             </div>
             <div class="form-buttons">
-                <Button  type="submit" :text="'Отправить форму'" :variant="'orange'" />
-                <router-link :to="{
-                    name: 'constructor',
-                    params: { formId: currentForm?.id },
-                }">
+                <Button type="submit" :text="'Отправить форму'" :variant="'orange'" />
+                <router-link :to="`/constructor/${currentForm?.id}`">
                     <Button :text="'Редактировать форму'" :variant="'orange'" />
                 </router-link>
-
             </div>
-          </template>
-        </label>
-      </div>
-      <div class="form-buttons">
-        <Button type="submit" :text="'Отправить форму'" :variant="'orange'" />
-        <router-link
-          :to="{
-            name: 'constructor',
-            params: {formId: currentForm?.id},
-          }">
-          <Button :text="'Редактировать форму'" :variant="'orange'" />
-        </router-link>
-      </div>
-    </form>
-  </div>
+        </form>
+        <Popup :hasError="isError" :show="showPopup" :text="popupText" />
+    </div>
+    <Transition name="fade">
+        <div v-if="formSend" class="form-wrapper">
+            <div style="text-align: center;">
+                <h2 style="font-size: 30px; margin-bottom: 20px;">Форма успешно отправлена</h2>
+                <Icon name="verified" style="color: green; font-size: 300px;" />
+            </div>
+        </div>
+    </Transition>
 </template>
 
 <script setup lang="ts">
-
-  // нужна переменная которая будет отслеживать заполнил ли я инпуты у которых поле isRequired = true
-  import {useFormsStore} from '@/store/forms';
-  import {computed, ref, watch} from 'vue';
-  import {useRoute} from 'vue-router';
-  import Radio from '@/components/UI/Radio.vue';
-  import Checkbox from '@/components/UI/Checkbox.vue';
-  import type {IField} from '@/types/formTypes';
-
-  const route = useRoute();
-  const formStore = useFormsStore();
-
-  const currentForm = computed(() => {
-    return formStore.forms.find((form) => form.id === String(route.params.id));
-  });
-
-  const inputAnswer = ref<string>('');
-  const textAreaAnswer = ref<string>('');
-  const radioAnswer = ref<string>('');
-  const checkboxAnswer = ref<string>('');
-
-  // const addAnswer = (value: string, question: IField): void => {
-  //   question.options.answer = value;
-  //   if (question.options.type === 'select' && question.options.isMultiSelect) {
-  //     if (!Array.isArray(question.options.answer)) {
-  //       question.options.answer = [];
-  //     }
-  //     question.options.answer.push(value);
-
-  //     // ???
-  //   }
-  // };
-
-  const answer = computed(() => {
-    const answer: Record<string, string> = {};
-
-    currentForm.value?.fields.forEach((q) => {
-      const question = q.options.question;
-      answer[question] = q.options.answer as string || '';
-    });
-
-    return answer;
-  });
-
-  const addAnswer = (value: string, question: IField): void => {
-    if (question.options.type === 'select' && question.options.isMultiSelect) {
-      if (!Array.isArray(question.options.answer)) {
-        question.options.answer = [];
-      }
-      if (!question.options.answer.includes(value)) {
-        question.options.answer.push(value);
-      } else if (question.options.answer.includes(value)) {
-        question.options.answer = question.options.answer.filter((item) => item !== value);
-      }
-      return; // ???
-
 // нужна переменная которая будет отслеживать заполнил ли я инпуты у которых поле isRequired = true
 import { useFormsStore } from '@/store/forms'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import Input from '@/components/UI/Input.vue'
-import Button from '@/components/UI/Button.vue'
 import Radio from '@/components/UI/Radio.vue'
 import Checkbox from '@/components/UI/Checkbox.vue'
+import Popup from '@/components/UI/Popup.vue'
 import type { IField } from '@/types/formTypes'
 
+onMounted(() => {
+    formSend.value = false
+})
 
 const route = useRoute()
 const formStore = useFormsStore()
 
 const errorText = ref<string>('')
 const isError = ref<boolean>(true)
+const showPopup = ref<boolean>(false)
+let popupText = ref<string>('');
+let formSend = ref<boolean>(false)
 
 const currentForm = computed(() => {
     return formStore.forms.find((form) => form.id === String(route.params.id))
 })
 
-
-const inputAnswer = ref<string>('')
-const textAreaAnswer = ref<string>('')
 const radioAnswer = ref<string>('')
 const checkboxAnswer = ref<string>('')
 
+const answer = computed(() => {
+    const answer: Record<string, string> = {};
+
+    currentForm.value?.fields.forEach((q) => {
+        const question = q.options.question;
+        answer[question] = q.options.answer as string || '';
+    });
+
+    return answer;
+});
+
 const addAnswer = (value: string, question: IField): void => {
-    question.options.answer = value
     if (question.options.type === 'select' && question.options.isMultiSelect) {
         if (!Array.isArray(question.options.answer)) {
-            question.options.answer = []
+            question.options.answer = [];
         }
-        question.options.answer.push(value) // ???
-
+        if (!question.options.answer.includes(value)) {
+            question.options.answer.push(value);
+        } else if (question.options.answer.includes(value)) {
+            question.options.answer = question.options.answer.filter((item) => item !== value);
+        }
+        return
     }
-
-
-    question.options.answer = value;
-  };
-
-  const onSubmit = (): void => {};
-
-
-
-const validateForm = () => {
-    if (currentForm.value) {
-        currentForm.value.fields.forEach((field) => {
-            if ((field.options.isRequired && field.options.answer === '' || field.options.answer === undefined)) {
-                isError.value = true
-                errorText.value = 'Это поле обязательно для заполнения'
-            } else {
-                isError.value = false
-                errorText.value = ''
-            }
-        })
-    }
+    question.options.answer = value
 }
 
 
+
+const validateForm = (): boolean => {
+    if (!currentForm.value) return false;
+
+    let hasError = false;
+
+    currentForm.value.fields.forEach((field) => {
+        if (field.options.isRequired && (!field.options.answer || field.options.answer.trim() === '')) {
+            hasError = true;
+        }
+    });
+
+    isError.value = hasError;
+    errorText.value = hasError ? 'Заполните все обязательные поля' : '';
+
+    return !hasError;
+};
+
+const submitForm = () => {
+    if (isError.value) {
+        errorText.value = 'Заполните все поля'
+        showPopup.value = true
+        setTimeout(() => {
+            popupText.value = ''
+            showPopup.value = false
+        }, 2500)
+        return
+    }
+    formStore.addAnswersToForm(route.params.id as string, answer.value)
+    popupText.value = 'Форма успешно отправлена'
+    showPopup.value = true
+    formSend.value = true
+
+}
 
 const onSubmit = (): void => {
-    validateForm()
+    if (validateForm()) {
+        submitForm()
+        showPopup.value = true
+        popupText.value = 'Форма успешно отправлена'
+        setTimeout(() => {
+            popupText.value = ''
+            showPopup.value = false
+        }, 2500)
+    } else {
+        showPopup.value = true
+        popupText.value = 'Заполните все поля'
+        setTimeout(() => {
+            popupText.value = ''
+            showPopup.value = false
+        }, 2500)
+    }
 }
-
 </script>
 <style scoped>
-  .form-wrapper {
+.form-wrapper {
     border: 1px solid gray;
     border-radius: 10px;
     padding: 30px;
     max-width: 1000px;
     margin: 0 auto;
-  }
+}
 
-  .form .question-wrapper:not(:last-child) {
+.form .question-wrapper:not(:last-child) {
     margin-bottom: 30px;
-  }
+}
 
-  .form-text {
+.form-text {
     text-align: center;
     margin-bottom: 30px;
-  }
+}
 
-  .form-text > *:not(:last-child) {
+.form-text>*:not(:last-child) {
     margin-bottom: 15px;
-  }
+}
 
-  .form-title {
+.form__title {
     font-size: 25px;
     font-weight: 500;
-  }
+}
 
-  .question-title {
+.question-title {
     position: relative;
     display: inline-block;
     margin-bottom: 10px;
     font-size: 14px;
-  }
+}
 
-  .required {
+.required {
     position: absolute;
     left: -10px;
     top: 50%;
@@ -291,32 +222,29 @@ const onSubmit = (): void => {
     height: 5px;
     background-color: rgb(230, 11, 11);
     border-radius: 50%;
-  }
+}
 
-  .options-wrapper {
+.options-wrapper {
     display: flex;
     gap: 15px;
-  }
+}
 
-  .option-wrapper {
+.option-wrapper {
     display: flex;
     align-items: center;
     gap: 10px;
-  }
+}
 
-  .form-buttons {
+.form-buttons {
     display: flex;
     gap: 10px;
-  }
+}
 
-  .form-textarea {
+.form-textarea {
     width: 100%;
     background: rgb(91 87 87 / 40%);
     border-radius: 10px;
     padding: 10px;
-
-  }
-
 }
 
 .error {
@@ -326,10 +254,24 @@ const onSubmit = (): void => {
     display: block;
 }
 
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.3s ease;
+}
 
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    bottom: -10px;
+}
 
+.fade-enter-to,
+.fade-leave-from {
+    opacity: 1;
+    bottom: -20px;
+}
 
-  /* .question-title::before {
+/* .question-title::before {
         content: '';
         position: absolute;
         left: -10px;

@@ -1,9 +1,6 @@
 import type { QuestionText, QuestionSelect, IField } from "@/types/formTypes";
 import { v4 as uuidv4 } from "uuid";
-import pencil from '@/assets/constructor/constructor-pen.svg';
-import lines from '@/assets/constructor/constructor-lines.svg';
-import singleSelect from '@/assets/constructor/constructor-check.svg'
-import multiSelect from '@/assets/constructor/constructor-plus.svg'
+
 
 export class OneRow implements IField {
     component: string = "TextField"
@@ -25,7 +22,7 @@ export class MultiRow implements IField {
         isRequired: false,
         question: '',
         type: 'text',
-        icon: lines,
+        icon: 'align-left',
     }
 }
 
@@ -38,7 +35,7 @@ export class Radio implements IField {
         type: 'select',
         options: [''],
         isMultiSelect: false,
-        icon: singleSelect,
+        icon: 'check-circle',
     }
 }
 
@@ -51,7 +48,7 @@ export class Checkbox implements IField {
         type: 'select',
         options: [''],
         isMultiSelect: true,
-        icon: multiSelect,
+        icon: 'plus-circle',
     }
 }
 

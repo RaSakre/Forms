@@ -2,12 +2,8 @@
   <div class="hero-section__constructor">
     <div class="constructor-tabs">
       <div class="tabs-item">
-        <img src="../assets/constructor/constructor-house.svg" alt="" />
+        <img src="../../assets/constructor/constructor-house.svg" alt="" />
         <p>Конструктор</p>
-      </div>
-      <div class="tabs-item">
-        <img src="../assets/constructor/constructor-settings.svg" alt="" />
-        <p>Настройки</p>
       </div>
     </div>
     <h2 class="constructor-title">Элементы формы</h2>
@@ -36,18 +32,20 @@
           v-if="isEditing"
           :variant="'white'"
           :text="'Сохранить изменённую форму'"
-          @click.prevent="emit('on-save', formId)"
+          :isLoading="isLoading"
+          @click.prevent="emit('on-edit')"
           :img="saveIcon" />
         <Button
-          v-else
+          v-else-if="authStore.isAuth"
           :variant="'white'"
           :text="'Сохранить форму'"
+          :isLoading="isLoading"
           @click.prevent="emit('on-save', formId)"
           :img="saveIcon" />
+          <router-link style="color: white;" to="/login" v-else>Войдите, чтобы сохранять формы</router-link>
         <router-link v-if="formId" :to="`/form/${formId}`">
           <Button style="width: 100%" :variant="'gray'" :text="'Просмотр'" />
         </router-link>
-
         <Button
           v-if="isEditing"
           @click.prevent="emit('on-delete-form', formId)"
@@ -70,6 +68,9 @@
   import multiSelect from '@/assets/constructor/constructor-plus.svg';
   import deleteFormIcon from '@/assets/index-thrash.svg';
   import type {IField} from '@/types/formTypes';
+  import { useAuthStore } from '@/store/auth';
+
+  const authStore = useAuthStore();
 
   const props = defineProps({
     isEditing: {
@@ -80,6 +81,10 @@
       type: String,
       required: false,
     },
+    isLoading: {
+      type: Boolean,
+      required: false,
+    }
   });
 
   const fieldsMap: Record<string, IField> = {
@@ -89,7 +94,7 @@
     checkbox: new Checkbox(),
   };
 
-  const emit = defineEmits(['on-add-field', 'on-delete-form', 'on-save']);
+  const emit = defineEmits(['on-add-field', 'on-delete-form', 'on-save', 'on-edit']);
 
   const addField = (field: string) => {
     emit('on-add-field', fieldsMap[field]);

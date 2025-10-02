@@ -2,7 +2,7 @@
   <transition name="popup">
     <div v-if="show" class="popup">
       <div class="popup-content">
-        <div class="popup-icon">✓</div>
+        <div :class="[hasError ? 'popup-error' : 'popup-icon']">{{ hasError ? '✕' : '✓' }} </div>
         <span class="popup-text">{{ text }}</span>
       </div>
     </div>
@@ -18,6 +18,10 @@
       type: String,
       default: '',
     },
+    hasError : {
+      type: Boolean,
+      required:false,
+    }
   });
 </script>
 <style scoped>
@@ -48,6 +52,19 @@
     height: 24px;
     border-radius: 50%;
     background: #10b981;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .popup-error {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #be0d0d;
     color: white;
     display: flex;
     align-items: center;
