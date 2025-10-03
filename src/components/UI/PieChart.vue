@@ -71,6 +71,9 @@ export default {
             position: 'bottom',
             labels: {
               padding: 20,
+              font: {
+                size: 14,
+              },
               usePointStyle: true,
             }
           },
