@@ -10,8 +10,8 @@ import {
   type User,
 } from "firebase/auth";
 import { computed, ref } from "vue";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
-import type { IRegisterModel } from "@/types/formTypes";
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import type { IProfileData, IRegisterModel } from "@/types/formTypes";
 import type { Ref } from "vue";
 
 export const useAuthStore = defineStore("user", () => {
@@ -70,6 +70,28 @@ export const useAuthStore = defineStore("user", () => {
   const logout = () => {
     signOut(auth);
   };
+
+  const updateUserData = async (data:IProfileData) => {
+    try {
+      const uid = userState.value?.uid;
+      if (uid){
+        const userRef = doc(db, 'users', uid);
+        await updateDoc(userRef , {
+          ...data,
+          updatedAt: serverTimestamp()
+        })
+        if (userData.value) {
+          userData.value = {
+            ...userData.value,
+            ...data,
+            updatedAt: new Date()
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Ошибка обновления данных пользователя:", error);
+    }
+  }
   return {
     userState,
     isAuth,
@@ -77,5 +99,6 @@ export const useAuthStore = defineStore("user", () => {
     login,
     logout,
     userData,
+    updateUserData
   };
 });

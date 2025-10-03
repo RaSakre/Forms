@@ -3,11 +3,7 @@
         <div class="container">
             <div class="hero-section">
                 <div class="hero-section__left">
-                    <button @click="router.push('/')" class="back-btn">
-                        Назад
-                        <img src="../assets/constructor/constructor-arrow-back.svg" alt="" />
-                    </button>
-                    <h1 class="hero-section__title">Создание формы</h1>
+                    <BackBtn :title="'Создание формы'" />
                     <ConstructorSettings :isEditing="!!state.id" :formId="state.id" @on-add-field="addQuestion"
                         @on-delete-form="deleteForm" @on-save="saveForm" :isLoading="formsStore.isLoading"
                         @on-edit="editExistingForm" />
@@ -42,7 +38,6 @@
 import ConstructorSettings from '@/components/Constructor/ConstructorSettings.vue';
 import ConstructorFieldsList from '@/components/Constructor/ConstructorFieldsList.vue';
 import Popup from '@/components/UI/Popup.vue';
-import { serverTimestamp } from 'firebase/firestore';
 import {  onMounted, ref, watch, type Ref} from 'vue';
 
 import type { IForm, IField } from '@/types/formTypes';
@@ -52,7 +47,6 @@ import { useRouter, useRoute } from 'vue-router';
 import { Checkbox, MultiRow, OneRow, Radio } from '@/fields-objects/objects';
 
 const route = useRoute();
-const router = useRouter();
 const formsStore = useFormsStore();
 const authStore = useAuthStore();
 
@@ -220,28 +214,11 @@ const loadDataFromForm = async () => {
     gap: 30px;
 }
 
-.back-btn {
-    display: flex;
-    color: rgb(252, 114, 1);
-    flex-direction: row-reverse;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.back-btn img {
-    width: 30px;
-}
 
 .hero-section__left {
     max-width: 400px;
 }
 
-.hero-section__title {
-    font-size: 30px;
-    font-weight: 600;
-    margin-bottom: 20px;
-}
 
 .hero-section__constructor {
     border: 1px solid gray;

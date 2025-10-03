@@ -20,6 +20,7 @@ import { type PropType } from 'vue';
     font-size: 20px;
   }
 
+
   i.pi-primary {
     color: #ffffff;
   }
@@ -32,8 +33,8 @@ import { type PropType } from 'vue';
     color: #28a745;
   }
 
-  i.pi-info {
-    color: #17a2b8;
+  i.pi-profile:hover {
+    color: #ea580c;
   }
 
   i.pi-warning {

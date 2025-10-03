@@ -1,6 +1,6 @@
 <template>
   <div class="form-field">
-    <label v-if="label" class="form-field-label">
+    <label  v-if="label" class="form-field-label">
       {{ label }}
     </label>
     <slot />
@@ -29,6 +29,11 @@
   .form-field {
     margin-bottom: 24px;
     position: relative;
+  }
+
+  .form-field-label {
+    display: inline-block;
+    margin-bottom: 5px;
   }
 
   .form-field-error {

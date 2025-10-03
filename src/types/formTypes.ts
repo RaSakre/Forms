@@ -8,7 +8,7 @@ export interface IForm {
   userId: string | undefined;
   createdAt?: FieldValue | number;
   updatedAt?: FieldValue | number;
-  answers?: Record<string, string>;
+  answers?: Record<string, string | string[]>;
 }
 
 export interface IUser {
@@ -18,6 +18,12 @@ export interface IUser {
   email: string;
   createdAt: FieldValue | Date;
   updatedAt?: FieldValue | Date;
+}
+
+export interface IProfileData {
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 export interface IRegisterModel {

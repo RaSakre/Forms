@@ -1,5 +1,4 @@
 <template>
-
   <div class="container">
     <h2 class="my-forms-title">Мои формы</h2>
     <div class="my-forms">

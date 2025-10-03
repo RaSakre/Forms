@@ -1,11 +1,7 @@
 <template>
   <div class="profile">
     <div class="container">
-      <button @click="router.push('/')" class="back-btn">
-        Назад
-        <img src="../assets/constructor/constructor-arrow-back.svg" alt="" />
-      </button>
-      <h2 class="profile__title">Мой профиль</h2>
+      <BackBtn :title="'Мой профиль'" />
       <div class="profile__content">
         <div class="profile__left">
           <div class="avatar-wrapper">
@@ -14,8 +10,10 @@
             </div>
           </div>
           <div class="profile__data">
-            <h3 class="profile__name">{{ name }}</h3>
-            <div class="data-wrapper">
+            <h3 v-if="!isEditing" class="profile__name">{{ name }}</h3>
+            <ProfileForm :date="date" :email="email" :is-editing="isEditing" :local-user-data="localUserData"
+              @confirm-changes="submit" @edit-mode="isEditing = !isEditing" v-if="isEditing" />
+            <div v-if="!isEditing" class="data-wrapper">
               <div class="data">
                 <Icon :name="'at'" />
                 <span>{{ email }}</span>
@@ -30,7 +28,8 @@
               </div>
             </div>
           </div>
-          <img src="../assets/constructor/constructor-pen.svg" alt="" class="profile-edit">
+          <img @click="isEditing = !isEditing" v-if="!isEditing" src="../assets/constructor/constructor-pen.svg" alt=""
+            class="profile-edit">
         </div>
         <div class="profile__resetpass">
           <button class="reset-btn">
@@ -45,19 +44,59 @@
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store/auth';
 import { useFormsStore } from '@/store/forms';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
+import ProfileForm from '@/components/ProfileForm.vue';
+
 
 const authStore = useAuthStore();
 const formsStore = useFormsStore();
 const router = useRouter();
+const isEditing = ref<boolean>(false)
+
+let localUserData = ref({
+  firstName: '',
+  lastName: '',
+  email: '',
+})
+
+const submit = () => {
+  if (hasChanges()) {
+    authStore.updateUserData(localUserData.value)
+    isEditing.value = !isEditing.value
+  }
+  else {
+    isEditing.value = !isEditing.value
+  }
+}
+
+watch(() => authStore.userData, (newVal) => {
+  if (newVal) {
+    localUserData.value = { ...newVal }
+  }
+}, { immediate: true })
+
+
+const hasChanges = () => {
+  if (localUserData.value.firstName !== authStore.userData?.firstName || localUserData.value.lastName !== authStore.userData?.lastName) {
+    return true
+  } else {
+    return false
+  }
+}
+
 
 const name = computed(() => {
-  return authStore.userData ? authStore.userData.firstName + ' ' + authStore.userData.lastName : ''
+  if (authStore.userData?.firstName || authStore.userData?.lastName) {
+    return authStore.userData.firstName + ' ' + authStore.userData.lastName
+  }
 })
 
 const email = computed(() => {
-  return authStore.userData ? authStore.userData.email : ''
+  if (authStore.userData?.email) {
+    return authStore.userData.email
+  }
 })
+
 
 const date = computed(() => {
   if (!authStore.userData?.createdAt) return ''
@@ -67,8 +106,10 @@ const date = computed(() => {
       timestampDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
     return formatted
   }
-
 });
+
+
+
 </script>
 <style scoped>
 .profile__title {
@@ -158,8 +199,16 @@ const date = computed(() => {
 }
 
 
-.reset-btn a{
+.reset-btn a {
   color: inherit;
   font-size: 18px;
+}
+
+.inputs-name {
+  margin-bottom: 20px;
+}
+
+.inputs-name div:not(:last-child) {
+  margin-bottom: 15px;
 }
 </style>
