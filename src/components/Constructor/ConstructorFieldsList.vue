@@ -1,6 +1,6 @@
 <template>
   <TransitionGroup name="list" tag="div" class="form-lower">
-    <div v-for="(question, idx) in localFields" 
+    <div v-for="(question, idx) in localFields.fields" 
     :key="question.options.id"
     class="form-lower__item"
     draggable="true"
@@ -41,7 +41,7 @@ const props = defineProps({
 let dragStartIndex:number|null =null;
 let dragOverIndex:number|null = null
 const emit = defineEmits(['drag'])
-const localFields = ref(props.state.fields)
+const localFields = ref(props.state)
 
 const onDragStart=(idx:number)=> {
       // Запоминаем, с какого индекса начали перетаскивание
@@ -59,14 +59,13 @@ const onDragOver=(idx:number) =>{
       if (dragStartIndex === null) return
       // Получаем копию массива
       console.log('onDrop 1 ')
-      //@ts-ignore
-      const movedItem = localFields[dragStartIndex];
+      const movedItem = localFields.value.fields[dragStartIndex];
       console.log('onDrop 2 ')
-      localFields.value.splice(dragStartIndex, 1) // Удаляем элемент, который двигаем
+      localFields.value.fields.splice(dragStartIndex, 1) // Удаляем элемент, который двигаем
       console.log('onDrop 3')
-      localFields.value.splice(idx, 0, movedItem) // Вставляем на новое место\
+      localFields.value.fields.splice(idx, 0, movedItem) // Вставляем на новое место\
       console.log('onDrop 4')
-      localFields.value = localFields.value
+      // localFields.value = localFields.value
       // Сбрасываем индексы
       dragStartIndex = null
       dragOverIndex = null
