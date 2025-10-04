@@ -1,6 +1,13 @@
 <template>
   <TransitionGroup name="list" tag="div" class="form-lower">
-    <div v-for="question in state.fields" :key="question.options.id" class="form-lower__item">
+    <div v-for="(question, idx) in localFields" 
+    :key="question.options.id"
+    class="form-lower__item"
+    draggable="true"
+    @dragstart="onDragStart(idx)"
+    @dragover.prevent="onDragOver(idx)"
+    @drop="onDrop(idx)"
+    :class="{ 'drag-over': idx === dragOverIndex }">
       <template v-if="question.options.type === 'text'">
         <TextField :question="question.options" :key="question.options.id" :state="state" />
         <div class="drag">
@@ -18,7 +25,7 @@
 
 </template>
 <script setup lang="ts">
-import { TransitionGroup, type PropType } from 'vue';
+import { ref, TransitionGroup, type PropType } from 'vue';
 import TextField from '../fields/TextField.vue';
 import SelectField from '../fields/SelectField.vue';
 import type { IForm } from '@/types/formTypes';
@@ -29,6 +36,41 @@ const props = defineProps({
     required: true,
   },
 });
+
+
+let dragStartIndex:number|null =null;
+let dragOverIndex:number|null = null
+const emit = defineEmits(['drag'])
+const localFields = ref(props.state.fields)
+
+const onDragStart=(idx:number)=> {
+      // Запоминаем, с какого индекса начали перетаскивание
+      dragStartIndex = idx
+      console.log('onDragStart');
+};
+
+const onDragOver=(idx:number) =>{
+      // При наведении устанавливаем индекс поверх которого перетаскиваем
+      dragOverIndex = idx;
+      console.log('onDragOver')
+};
+
+ const onDrop=(idx:number)=> {
+      if (dragStartIndex === null) return
+      // Получаем копию массива
+      console.log('onDrop 1 ')
+      //@ts-ignore
+      const movedItem = localFields[dragStartIndex];
+      console.log('onDrop 2 ')
+      localFields.value.splice(dragStartIndex, 1) // Удаляем элемент, который двигаем
+      console.log('onDrop 3')
+      localFields.value.splice(idx, 0, movedItem) // Вставляем на новое место\
+      console.log('onDrop 4')
+      localFields.value = localFields.value
+      // Сбрасываем индексы
+      dragStartIndex = null
+      dragOverIndex = null
+    };
 </script>
 
 <style scoped>
