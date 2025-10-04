@@ -28,7 +28,7 @@
 import { ref, TransitionGroup, type PropType } from 'vue';
 import TextField from '../fields/TextField.vue';
 import SelectField from '../fields/SelectField.vue';
-import type { IForm } from '@/types/formTypes';
+import type { IField, IForm } from '@/types/formTypes';
 
 const props = defineProps({
   state: {
@@ -46,23 +46,25 @@ const localFields = ref(props.state)
 const onDragStart=(idx:number)=> {
       // Запоминаем, с какого индекса начали перетаскивание
       dragStartIndex = idx
-      console.log('onDragStart');
+      console.log('onDragStart', idx);
 };
 
 const onDragOver=(idx:number) =>{
       // При наведении устанавливаем индекс поверх которого перетаскиваем
       dragOverIndex = idx;
-      console.log('onDragOver')
+      console.log('onDragOver', idx)
 };
 
  const onDrop=(idx:number)=> {
       if (dragStartIndex === null) return
       // Получаем копию массива
       console.log('onDrop 1 ')
-      const movedItem = localFields.value.fields[dragStartIndex];
+      const movedItem:IField |undefined= localFields.value.fields[dragStartIndex];
+      if(movedItem === undefined){return}
       console.log('onDrop 2 ')
       localFields.value.fields.splice(dragStartIndex, 1) // Удаляем элемент, который двигаем
       console.log('onDrop 3')
+      
       localFields.value.fields.splice(idx, 0, movedItem) // Вставляем на новое место\
       console.log('onDrop 4')
       // localFields.value = localFields.value
