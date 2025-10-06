@@ -46,7 +46,6 @@ const initRealtimeListener = () => {
       orderBy("createdAt", "desc")
     ) :
     query(collection(db, "forms"), where("userId", "==", "no-user")); 
-
   unsubscribe = onSnapshot(formsQuery, (snapshot) => {
     forms.value = snapshot.docs.map(
       (doc) =>
@@ -91,8 +90,6 @@ const addForm = async (form: IForm) => {
         options: { ...field.options }
       }))
     };
-    
-    console.log('Создаем форму с данными:', formData); // Для отладки
     
     const docRef = await addDoc(collection(db, "forms"), formData);
     currentEditingFormId.value = docRef.id;

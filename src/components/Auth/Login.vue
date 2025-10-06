@@ -15,8 +15,6 @@
         <FormField :error="errors.password">
           <Input v-model="model.password" :type="'password'" placeholder="Введите пароль" variant="gray" :icon="passwordIcon" />
         </FormField>
-
-        
         <div class="auth-footer">
           <Button text="Войти" variant="orange" />
           <div class="auth-footerBtns">
@@ -35,9 +33,11 @@
           </div>
         
       </div>
+
       </Form>
       
     </div>
+    <Popup :show="showPopup" :text="errorText" :hasError="isError" />
   </div>
 </template>
 <script setup lang="ts">
@@ -52,6 +52,9 @@
   const router = useRouter()
 
   const authStore = useAuthStore()
+  let errorText = ref<string>('')
+  let showPopup = ref<boolean>(false)
+  let isError = ref<boolean>(false)
 
   interface ILoginModel {
     email: string;
@@ -75,10 +78,21 @@
         router.push('/')
       }
     })
+    .catch((error) => {
+      errorText.value = 'Неправильные данные входа'
+      showPopup.value = true
+      isError.value = true
+      setTimeout(() => {
+        showPopup.value = false
+        errorText.value = ''
+        isError.value = false
+      }, 4000)
+    })
   };
 </script>
 <style scoped>
   .auth-wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;

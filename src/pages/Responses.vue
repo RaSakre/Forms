@@ -20,21 +20,20 @@
         <TabPanels>
           <TabPanel value="0">
             <div v-if="form?.answers" class="answers-table">
-              <div v-for="(answer, question) in form?.answers" :key="question"  class="table-column">
+              <div v-for="(answer, question) in form?.answers" :key="question" class="table-column">
                 <div class="question-cell">{{ question }}</div>
                 <div class="answer-cell">{{ Array.isArray(answer) ? answer.join(', ') : answer }}</div>
               </div>
               <div class="table-column">
                 <div class="question-cell">Дата заполнения</div>
-              <div class="answer-cell">{{ date}}</div>
+                <div class="answer-cell">{{ date }}</div>
               </div>
-              
             </div>
             <p v-else>
               На данную форму ответов нет
             </p>
           </TabPanel>
-          <TabPanel value="1">
+          <TabPanel v-if="form?.answers" value="1">
             <PieChart :answers="form?.answers" />
           </TabPanel>
         </TabPanels>
@@ -53,7 +52,7 @@ import PieChart from '@/components/UI/PieChart.vue';
 
 import { useRoute } from 'vue-router';
 import { useFormsStore } from '@/store/forms';
-import { computed } from 'vue';
+import { computed, type ComputedRef } from 'vue';
 
 const route = useRoute();
 const formsStore = useFormsStore()
@@ -61,7 +60,7 @@ const form = computed(() => {
   return formsStore.forms.find((form) => form.id === route.params.id)
 })
 
-const date = computed(() => {
+const date:ComputedRef<string | undefined> = computed(() => {
   if (form.value?.updatedAt) {
     //@ts-ignore
     const timestampDate = form.value.updatedAt?.toDate()
@@ -160,6 +159,7 @@ const date = computed(() => {
   min-height: 60px;
   display: flex;
   align-items: center;
+  border-right: 1px solid rgba(226, 232, 249, 0.5);
 }
 
 .answer-cell {
@@ -169,6 +169,6 @@ const date = computed(() => {
   height: 100%;
   display: flex;
   align-items: center;
+  border-right: 1px solid rgba(226, 232, 249, 0.5);
 }
-
 </style>

@@ -50,9 +50,9 @@
                 </label>
             </div>
             <div class="form-buttons">
-                <Button type="submit" :text="'Отправить форму'" :variant="'orange'" />
+                <Button type="submit" text="Отправить форму" :variant="'orange'" />
                 <router-link :to="`/constructor/${currentForm?.id}`">
-                    <Button :text="'Редактировать форму'" :variant="'orange'" />
+                    <Button text="Редактировать форму" :variant="'orange'" />
                 </router-link>
             </div>
         </form>
@@ -69,7 +69,6 @@
 </template>
 
 <script setup lang="ts">
-// нужна переменная которая будет отслеживать заполнил ли я инпуты у которых поле isRequired = true
 import { useFormsStore } from '@/store/forms'
 import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'

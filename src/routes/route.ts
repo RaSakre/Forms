@@ -7,6 +7,7 @@ import Profile from "@/pages/Profile.vue"
 import ResetPassword from "@/components/Auth/ResetPassword.vue"
 import Responses from "@/pages/Responses.vue"
 import { createRouter,createWebHistory } from "vue-router"
+import { useAuthStore } from "@/store/auth"
 
 
 const routes = [
@@ -24,6 +25,18 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+})
+
+
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token')
+    if (to.path === '/profile' && !token) {
+        next('/')
+    } else if ((token && to.path === '/login') || (token && to.path === '/register')) {
+        next('/')
+    } else {
+        next()
+    }
 })
 
 export default router

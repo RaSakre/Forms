@@ -1,5 +1,5 @@
 <template>
-  <Form v-if="isEditing" :onSubmit="submitChanges">
+  <Form :model="localUserData" v-if="isEditing" :onSubmit="submitChanges">
     <FormField label="Имя">
       <Input :type="'text'" :variant="'gray'" :icon="userIcon" :placeholder="'Имя'" v-model="localUserData.firstName" />
     </FormField>

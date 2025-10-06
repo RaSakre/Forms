@@ -7,6 +7,7 @@ import Button from './components/UI/Button.vue'
 import Form from './components/UI/Form.vue'
 import FormField from './components/UI/FormField.vue'
 import BackBtn from './components/UI/BackBtn.vue'
+import Popup from './components/UI/Popup.vue'
 import PrimeVue from 'primevue/config';
 
 
@@ -34,5 +35,6 @@ app.component('Button', Button)
 app.component('Form', Form)
 app.component('FormField', FormField)
 app.component('BackBtn', BackBtn)
+app.component('Popup', Popup)
 
 app.mount('#app')

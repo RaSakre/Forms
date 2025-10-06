@@ -9,6 +9,7 @@
   </transition>
 </template>
 <script setup lang="ts">
+
   const props = defineProps({
     show: {
       type: Boolean,

@@ -31,26 +31,25 @@
           <img @click="isEditing = !isEditing" v-if="!isEditing" src="../assets/constructor/constructor-pen.svg" alt=""
             class="profile-edit">
         </div>
-        <div class="profile__resetpass">
+        <router-link to="/reset-password" class="profile__resetpass">
           <button class="reset-btn">
-            <router-link to="/reset-password">Изменить пароль</router-link>
+            <p style="color: white;">Изменить пароль</p>
           </button>
-        </div>
+        </router-link>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store/auth';
 import { useFormsStore } from '@/store/forms';
 import { computed, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import ProfileForm from '@/components/ProfileForm.vue';
 
-
+const router = useRouter()
 const authStore = useAuthStore();
 const formsStore = useFormsStore();
-const router = useRouter();
 const isEditing = ref<boolean>(false)
 
 let localUserData = ref({
@@ -72,6 +71,9 @@ const submit = () => {
 watch(() => authStore.userData, (newVal) => {
   if (newVal) {
     localUserData.value = { ...newVal }
+  }
+  if (newVal === null) {
+    router.push('/')
   }
 }, { immediate: true })
 
@@ -107,6 +109,8 @@ const date = computed(() => {
     return formatted
   }
 });
+
+
 
 
 

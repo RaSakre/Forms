@@ -24,22 +24,6 @@
 
   const errors = reactive<Record<string, string>>({});
 
-  // const model = ref<IRegisterModel>({
-  //   name: '',
-  //   surname: '',
-  //   email: '',
-  //   password: '',
-  //   confirmPassword: '',
-  // });
-
-  // const rules = {
-  //   name: [Validators.required],
-  //   surname: [Validators.required],
-  //   email: [Validators.required, Validators.email],
-  //   password: [Validators.required, Validators.minLength(6)],
-  //   confirmPassword: [Validators.required, Validators.minLength(6), Validators.sameAs('password')],
-  // };
-
   const validate = () => {
     Object.keys(errors).forEach((k) => delete errors[k]); // очищаем ошибки
 

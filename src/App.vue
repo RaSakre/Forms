@@ -1,20 +1,17 @@
 <script setup lang="ts">
     import { onMounted } from 'vue';
     import { useFormsStore } from './store/forms';
-    import { useAuthStore } from './store/auth';
     import Layout from './Layout/Layout.vue';
     import { useRouter } from 'vue-router';
 
     const formsStore = useFormsStore();
-    const authStore = useAuthStore();
     const router = useRouter();
 
     onMounted(() => {
+        const token = localStorage.getItem('token')
         formsStore.initRealtimeListener()
-        if (authStore.isAuth === false) {
+        if (!token) {
             router.push('/login')
-        }else if(authStore.isAuth === true){
-            router.push('/')
         }
     });
 

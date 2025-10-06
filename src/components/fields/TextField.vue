@@ -1,4 +1,5 @@
 <template >
+    <div>
     <Input v-model="question.question" :variant="'gray'" :placeholder="'Вопрос'" :type="'text'" />
     <div class="form-item-lower">
         <div class="form-item-lowerleft">
@@ -14,6 +15,7 @@
             </label>
             <img style="cursor: pointer;" src="../../assets/delete.svg" alt="" @click="deleteQuestion(question.id)" />
         </div>
+    </div>
     </div>
 </template>
 <script setup lang='ts'>

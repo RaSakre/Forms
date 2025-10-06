@@ -36,7 +36,7 @@ const props = defineProps({
 
 const formsStore = useFormsStore();
 
-const deleteForm = (id: string) => {
+const deleteForm = (id: string | undefined) => {
   if (!id) return;
   formsStore.deleteForm(id);
 };

@@ -15,13 +15,13 @@
                             <img @click="isNameWritten = !isNameWritten" src="@/assets/constructor/constructor-edit.svg"
                                 alt="" />
                         </h2>
+                        <Input v-if="!isNameWritten" @blur="handleInputBlur" v-model="state.name" :variant="'gray'"
+                            :type="'text'" :placeholder="'Название'" />
                         <h2 v-if="isDescriptionWritten && state.description !== ''" class="form-title">
                             {{ state.description }}
                             <img @click="isDescriptionWritten = !isDescriptionWritten"
                                 src="@/assets/constructor/constructor-edit.svg" alt="" />
                         </h2>
-                        <Input v-if="!isNameWritten" @blur="handleInputBlur" v-model="state.name" :variant="'gray'"
-                            :type="'text'" :placeholder="'Название'" />
                         <textarea v-if="!isDescriptionWritten" @blur="handleTextareaBlur" v-model="state.description"
                             rows="4" class="hero-section__form-description" placeholder="Описание"></textarea>
                     </div>
@@ -43,7 +43,7 @@ import {  onMounted, ref, watch, type Ref} from 'vue';
 import type { IForm, IField } from '@/types/formTypes';
 import { useFormsStore } from '@/store/forms';
 import { useAuthStore } from '@/store/auth';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { Checkbox, MultiRow, OneRow, Radio } from '@/fields-objects/objects';
 
 const route = useRoute();
@@ -176,9 +176,8 @@ const loadDataFromForm = async () => {
     if (route.params.formId) {
         let form = formsStore.forms.find((form) => form.id === route.params.formId);
         if (!form) {
-            //@ts-ignore
-            form = await formsStore.loadSingleForm(String(route.params.formId));
-            console.log(form)
+            form = await formsStore.loadSingleForm(String(route.params.formId)) as IForm;
+            
         }
         if (form) {
             state.value = { ...form };
@@ -249,11 +248,7 @@ const loadDataFromForm = async () => {
     gap: 30px;
 }
 
-.form-lower__item {
-    border: 1px solid gray;
-    padding: 15px;
-    border-radius: 10px;
-}
+
 
 .constructor-title {
     font-size: 25px;
