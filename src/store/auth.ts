@@ -12,14 +12,19 @@ import {
 import { computed, ref } from "vue";
 import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import type { IProfileData, IRegisterModel } from "@/types/formTypes";
-import type { Ref } from "vue";
+import type { ComputedRef, Ref } from "vue";
 
 export const useAuthStore = defineStore("user", () => {
   const formsStore = useFormsStore();
-  const userState:Ref<User | null> = ref<User | null>(null);
+  const userState: Ref<User | null> = ref<User | null>(null);
   const userData = ref<any>(null);
-  const isAuth = computed(() => {
-    return !!userState.value;
+  const isAuth: ComputedRef<boolean | null> = computed(() => {
+
+    if (userState.value === null) {
+      return null
+    } else {
+      return true
+    }
   });
   onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -71,12 +76,12 @@ export const useAuthStore = defineStore("user", () => {
     signOut(auth);
   };
 
-  const updateUserData = async (data:IProfileData) => {
+  const updateUserData = async (data: IProfileData) => {
     try {
       const uid = userState.value?.uid;
-      if (uid){
+      if (uid) {
         const userRef = doc(db, 'users', uid);
-        await updateDoc(userRef , {
+        await updateDoc(userRef, {
           ...data,
           updatedAt: serverTimestamp()
         })
