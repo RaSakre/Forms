@@ -61,25 +61,29 @@ let popupText = ref<string>('')
 let showPopup = ref<boolean>(false)
 let isError = ref<boolean>(false)
 
-const register = () => {
-  authStore.register(model.value)
-  router.push('/login')
-  
-    .catch((err:FirebaseError) => {
-      if (err.code === 'auth/email-already-in-use') {
-        popupText.value = 'Пользователь с таким email уже существует'
-      }
-      if (err.code === 'auth/invalid-email') {
-        popupText.value = 'Неверный формат email'
-      }
-      showPopup.value = true
-      isError.value = true
-      setTimeout(() => {
-        showPopup.value = false
-        popupText.value = ''
-        isError.value = false
-      },4000)
-    })
+const register = async () => {
+  try {
+    await authStore.register(model.value);
+    router.push('/login');
+  } catch (err) {
+    const error = err as FirebaseError
+    if (error.code === 'auth/email-already-in-use') {
+      popupText.value = 'Пользователь с таким email уже существует';
+    } else if (error.code === 'auth/invalid-email') {
+      popupText.value = 'Неверный формат email';
+    } else {
+      popupText.value = 'Произошла ошибка при регистрации';
+    }
+    
+    showPopup.value = true;
+    isError.value = true;
+    
+    setTimeout(() => {
+      showPopup.value = false;
+      popupText.value = '';
+      isError.value = false;
+    }, 4000);
+  }
 };
 
 const model = ref<IRegisterModel>({
