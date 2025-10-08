@@ -13,15 +13,15 @@
                             <li><router-link :to="authStore.isAuth ? '/profile' : '/login'">{{ authStore.isAuth ? 'Профиль' : 'Войти'}}</router-link></li>
                         </ul>
                     </nav>
-                    <div class="theme">
-                        <img src="../assets/Header/sun.svg" alt="">
-                        <p>Светлая тема</p>
-                    </div>
+                    <button @click="changeTheme" class="theme">
+                        <Icon :name="'sun'" style="color: var(--text-color);"/>
+                        <p ref="themeText" style="color: var(--text-color);">{{ body.classList.contains('theme-light') ? 'Темная тема' : 'Светлая тема'}}</p>
+                    </button>
                     <div class="header-user">
                         <router-link to="/profile">
                             <p v-if="authStore.isAuth">{{ authStore.userState.email }}</p>
                         </router-link>
-                        <img v-if="authStore.isAuth" @click="logout" src="../assets/Header/exit.svg" alt="">
+                        <Icon v-if="authStore.isAuth" @click="logout" :name="'sign-out'" style="color: var(--text-color);  font-size: 16px;" />
                     </div>
                 </div>
             </div>
@@ -31,6 +31,7 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/store/auth';
+import { useTemplateRef } from 'vue';
 const route = useRoute()
 const authStore = useAuthStore()
 const authRoutes = ['/login', '/register', '/forgot-password']
@@ -38,13 +39,22 @@ const authRoutes = ['/login', '/register', '/forgot-password']
 const logout = () => {
     authStore.logout()
 }
+
+const themeText = useTemplateRef('themeText')
+
+const body = document.querySelector('body')
+
+
+const changeTheme = () => {
+    body.classList.toggle('theme-light')
+    themeText.value.textContent = body.classList.contains('theme-light') ? 'Темная тема' : 'Светлая тема'
+}
+
 </script>
 <style scoped>
 .header {
     padding: 10px 0px;
 }
-
-
 
 .header__content {
     position: relative;
@@ -81,7 +91,7 @@ const logout = () => {
 }
 
 .header__menu-list a {
-    color: white;
+    color: var(--text-color);
 }
 
 .theme {
@@ -95,10 +105,9 @@ const logout = () => {
     object-fit: cover;
 }
 
-.header-user img {
+.header-user i {
     position: relative;
     top: 3px;
-    width: 20px;
     object-fit: cover;
     cursor: pointer;
 }
@@ -110,6 +119,6 @@ const logout = () => {
 }
 
 .header-user a {
-    color: white;
+    color: var(--text-color);
 }
 </style>

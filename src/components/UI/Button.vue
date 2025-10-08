@@ -1,8 +1,9 @@
 <template>
     <button class="button" :class="[variant && `button--${variant}`]">
-        <img class="btn-img" :src="img" v-if="img && !isLoading" alt="">
+        <slot v-if="!isLoading"/>
         <Loader v-if="isLoading" />
         {{ text }}
+        
     </button>
 </template>
 <script setup lang="ts">
@@ -17,6 +18,9 @@ import Loader from './Loader.vue';
 </script>
 <style scoped>
 .button {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
     outline: none;
     padding: 10px 20px;
     border: none;
@@ -33,8 +37,8 @@ import Loader from './Loader.vue';
 }
 
 .button--white {
-    background-color: #fff;
-    color: #000;
+    background-color: var(--button-bg-color);
+    color: var(--button-text-color);
 }
 
 .button--gray {
@@ -59,8 +63,4 @@ import Loader from './Loader.vue';
 .btn-img {
     width: 20px;
 }
-
-
-
-
 </style>

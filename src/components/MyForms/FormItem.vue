@@ -7,13 +7,13 @@
     <div class="form-buttons">
       <router-link class="form-button responses" :to="`response/${form.id}`">
         <button>
-          <Icon name="inbox" color="primary" />
+          <Icon name="inbox" style="color: var(--text-color);" />
         </button>
         <span v-if="findQuestionsLength(form)" class="questions-length">{{ findQuestionsLength(form) }}</span>
       </router-link>
       <router-link class="form-button" :to="`/constructor/${form.id}`">
         <button>
-          <Icon name="pencil" color="primary" />
+          <Icon name="pencil" style="color: var(--text-color);" />
         </button>
       </router-link>
       <button @click="deleteForm(form.id)" class="form-button">

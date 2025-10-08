@@ -21,8 +21,8 @@
           <TabPanel value="0">
             <div v-if="form?.answers" class="answers-table">
               <div v-for="(answer, question) in form?.answers" :key="question" class="table-column">
-                <div class="question-cell">{{ question }}</div>
-                <div class="answer-cell">{{ Array.isArray(answer) ? answer.join(', ') : answer }}</div>
+                <div v-if="answer !== ''" class="question-cell">{{ question }}</div>
+                <div v-if="answer !== ''" class="answer-cell">{{ Array.isArray(answer) ? answer.join(', ') : answer }}</div>
               </div>
               <div class="table-column">
                 <div class="question-cell">Дата заполнения</div>
@@ -104,7 +104,7 @@ const date:ComputedRef<string | undefined> = computed(() => {
 
 .custom-tabs :deep(.p-tab) {
   padding: 12px 24px;
-  color: #fff;
+  color: var(--text-color);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;

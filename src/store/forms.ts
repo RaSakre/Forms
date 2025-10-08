@@ -9,7 +9,6 @@ import {
   onSnapshot,
   doc,
   updateDoc,
-  getDocs,
   getDoc,
   serverTimestamp,
   query,

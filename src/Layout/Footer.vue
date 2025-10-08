@@ -4,7 +4,7 @@
             <div class="footer__content">
                 &#169; Все права защищены
                 <a href="https://github.com/RaSakre" class="footer__link">Ранэль
-                    <img src="../assets/Footer/github-icon.svg" alt="">
+                    <Icon :name="'github'" style="color: var(--text-color);"/>
                 </a>
             </div>
         </div>
@@ -42,10 +42,7 @@ const authRoutes = ['/login', '/register', '/forgot-password']
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #fff;
+    color: var(--text-color);
 }
 
-.footer__link img {
-    width: 20px;
-}
 </style>

@@ -3,7 +3,7 @@
     <Input v-model="question.question" :variant="'gray'" :placeholder="'Вопрос'" :type="'text'" />
     <div class="form-item-lower">
         <div class="form-item-lowerleft">
-            <Icon :name="question.icon" alt="" />
+            <Icon :name="question.icon" :style="{color: question.iconColor}" alt="" />
             <p v-if="question.type === 'text'">{{ question.isOneRow ? 'Однострочный ответ' : 'Многострочный ответ' }}</p>
         </div>
         <div class="form-item-lowerright">

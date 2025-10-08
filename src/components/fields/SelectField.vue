@@ -12,7 +12,7 @@
     </div>
     <div class="form-item-lower">
         <div class="form-item-lowerleft">
-            <Icon :name="question.icon"/>
+            <Icon :name="question.icon" :style="{color: question.iconColor}"/>
             <p>{{ question.isMultiSelect ? 'Список множественного выбора' : 'Список одиночного выбора' }}</p>
         </div>
 
@@ -73,14 +73,7 @@ const deleteSelectOption = (id: string, index: number): void => {
     }
 }
 
-// const field = defineModel<QuestionSelect>({required: true, default: () => ({
-//     id: '',
-//     type: 'select',
-//     question: '',
-//     image: '',
-//     isRequired: false,
-//     isMultiSelect: false,
-// })})
+
 </script>
 <style scoped>
 .form-item-lower {
@@ -128,7 +121,7 @@ const deleteSelectOption = (id: string, index: number): void => {
 
 .addBtn button {
     background-color: rgb(128 128 128 / 30%);
-    color: white;
+    color: var(--text-color);
     border: none;
     border-radius: 10px;
     padding: 10px 20px;

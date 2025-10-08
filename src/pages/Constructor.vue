@@ -12,18 +12,16 @@
                     <div class="hero-section__form-upper">
                         <h2 v-if="isNameWritten && state.name !== ''" class="form-title">
                             {{ state.name }}
-                            <img @click="isNameWritten = !isNameWritten" src="@/assets/constructor/constructor-edit.svg"
-                                alt="" />
+                                <Icon @click="isNameWritten = !isNameWritten" :name="'pen-to-square'" style="color: var(--text-color);"/>
                         </h2>
                         <Input v-if="!isNameWritten" @blur="handleInputBlur" v-model="state.name" :variant="'gray'"
                             :type="'text'" :placeholder="'Название'" />
                         <h2 v-if="isDescriptionWritten && state.description !== ''" class="form-title">
                             {{ state.description }}
-                            <img @click="isDescriptionWritten = !isDescriptionWritten"
-                                src="@/assets/constructor/constructor-edit.svg" alt="" />
+                                <Icon @click="isDescriptionWritten = !isDescriptionWritten" :name="'pen-to-square'" style="color: var(--text-color);"/>
                         </h2>
                         <textarea v-if="!isDescriptionWritten" @blur="handleTextareaBlur" v-model="state.description"
-                            rows="4" class="hero-section__form-description" placeholder="Описание"></textarea>
+                            rows="5" class="hero-section__form-description" placeholder="Описание"></textarea>
                     </div>
                     <div class="hero-section__form-lower">
                         <ConstructorFieldsList :state="state" />
@@ -227,7 +225,6 @@ const loadDataFromForm = async () => {
 
 .constructor-tabs {
     display: flex;
-    gap: 30px;
     margin-bottom: 30px;
     justify-content: center;
 }
@@ -238,9 +235,6 @@ const loadDataFromForm = async () => {
     gap: 10px;
 }
 
-.tabs-item img {
-    width: 20px;
-}
 
 .form-lower {
     display: flex;
@@ -279,9 +273,6 @@ const loadDataFromForm = async () => {
     gap: 15px;
 }
 
-.constructor-button img {
-    width: 20px;
-}
 
 .constructor-actions {
     position: relative;
@@ -305,9 +296,6 @@ const loadDataFromForm = async () => {
     margin-bottom: 20px;
 }
 
-.action-btn img {
-    width: 20px;
-}
 
 .hero-section__right {
     flex-grow: 1;
@@ -330,7 +318,27 @@ const loadDataFromForm = async () => {
     background: rgb(91 87 87 / 40%);
     border-radius: 10px;
     padding: 10px;
+    outline: none;
+    
+    resize: none;
+    transition: outline 0.3s ease, box-shadow 0.3s ease; 
 }
+
+.hero-section__form-description:hover {
+    box-shadow: 0 0 0 1px #ffffff;
+}
+
+.hero-section__form-description:focus {
+    outline: none ;
+    box-shadow: 0 0 0 1px rgb(252, 114, 1) ;
+}
+
+.hero-section__form-description:focus-visible {
+    outline: none ;
+    box-shadow: 0 0 0 1px rgb(252, 114, 1) ;
+}
+
+
 
 .hero-section__form-lower {
     border: 2px dotted gray;
@@ -347,14 +355,13 @@ const loadDataFromForm = async () => {
     margin-bottom: 20px;
 }
 
-.form-title img {
+.form-title i {
     cursor: pointer;
-    width: 20px;
 }
 
 .addBtn button {
     background-color: rgb(128 128 128 / 30%);
-    color: white;
+    color: var(--text-color);
     border: none;
     border-radius: 10px;
     padding: 10px 20px;
@@ -387,9 +394,4 @@ input:checked~.status-text {
     color: #ff7b00;
 }
 
-/* Отключенное состояние */
-.modern-toggle input:disabled+.modern-slider {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
 </style>

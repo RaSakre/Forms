@@ -8,15 +8,15 @@
     </FormField>
     <div class="data-wrapper">
       <div class="data">
-        <Icon :name="'at'" />
+        <Icon :name="'at'" style="color: var(--textcolor);"/>
         <span>{{ email }}</span>
       </div>
       <div class="data">
-        <Icon :name="'clipboard'" />
+        <Icon :name="'clipboard'" style="color: var(--textcolor);" />
         <span>Количество созданных форм {{ formsStore.forms.length }}</span>
       </div>
       <div class="data">
-        <Icon :name="'calendar'" />
+        <Icon :name="'calendar'" style="color: var(--textcolor);"/>
         <span>Дата регистрации: {{ date }}</span>
       </div>
     </div>

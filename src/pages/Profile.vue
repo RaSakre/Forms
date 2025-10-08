@@ -15,25 +15,25 @@
               @confirm-changes="submit" @edit-mode="isEditing = !isEditing" v-if="isEditing" />
             <div v-if="!isEditing" class="data-wrapper">
               <div class="data">
-                <Icon :name="'at'" />
+                <Icon :name="'at'" style="color: var(--textcolor);"/>
                 <span>{{ email }}</span>
               </div>
               <div class="data">
-                <Icon :name="'clipboard'" />
+                <Icon :name="'clipboard'" style="color: var(--textcolor);"/>
                 <span>Количество созданных форм {{ formsStore.forms.length }}</span>
               </div>
               <div class="data">
-                <Icon :name="'calendar'" />
+                <Icon :name="'calendar'" style="color: var(--textcolor);"/>
                 <span>Дата регистрации: {{ date }}</span>
               </div>
             </div>
           </div>
-          <img @click="isEditing = !isEditing" v-if="!isEditing" src="../assets/constructor/constructor-pen.svg" alt=""
-            class="profile-edit">
+          <Icon :name="'user-edit'" style="color: var(--text-color); font-size: 30px;" @click="isEditing = !isEditing" v-if="!isEditing" 
+            class="profile-edit"/>
         </div>
         <router-link to="/reset-password" class="profile__resetpass">
           <button class="reset-btn">
-            <p style="color: white;">Изменить пароль</p>
+            <p style="color: var(--text-color);">Изменить пароль</p>
           </button>
         </router-link>
       </div>

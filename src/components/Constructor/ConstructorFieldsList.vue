@@ -1,7 +1,6 @@
 <template>
   <TransitionGroup name="list" tag="div" class="form-lower">
     <div v-for="(question, idx) in localFields" :key="question.options.id" class="form-lower__item"
-      draggable="true" 
       @dragstart="onDragStart(idx)" 
       @dragover.prevent="onDragOver(idx)"
       @drop="onDrop(idx)">
@@ -13,7 +12,7 @@
           <SelectField :question="question.options" :key="question.options.id" :state="state" />
         </template>
       </div>
-      <div class="drag">
+      <div draggable="true" class="drag">
         <img src="../../assets/drag-dots.svg" alt="Перетащить">
       </div>
     </div>

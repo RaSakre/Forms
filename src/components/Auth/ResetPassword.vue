@@ -91,8 +91,10 @@ const onSubmit = () => {
 }
 
 .auth-icon {
+  display: flex;
+  justify-content: center;
   background: #272725;
-  width: 50px;
+  width: 45px;
   padding: 10px;
   border-radius: 10px;
   align-self: center;

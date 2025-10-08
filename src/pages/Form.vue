@@ -16,14 +16,14 @@
                             addAnswer(value, question);
                         }" v-model="question.options.answer" :key="question.options.id" :variant="'gray'" type="text"
                             :placeholder="formStore.forms.find(form => form.id === currentForm?.id)?.answers?.[question.options.question]" />
-                        <span v-if="isError" class="error">{{ errorText }}</span>
+                        <span  v-if="isError && question.options.isRequired" class="error">{{ errorText }}</span>
                     </template>
 
                     <template v-else-if="question.options.type === 'text' && !question.options.isOneRow">
                         <textarea @input="addAnswer($event.target?.value, question)" v-model="question.options.answer"
                             :placeholder="formStore.forms.find(form => form.id === currentForm?.id)?.answers?.[question.options.question]"
                             class="form-textarea" rows="3"></textarea>
-                        <span v-if="isError" class="error">{{ errorText }}</span>
+                        <span  v-if="isError && question.options.isRequired" class="error">{{ errorText }}</span>
                     </template>
 
                     <template v-else-if="question.options.type === 'select' && !question.options.isMultiSelect">
@@ -33,10 +33,9 @@
                                     v-model="radioAnswer" :value="option" :name="`option-${index}`"
                                     :checked="formStore.forms.find(form => form.id === currentForm?.id)?.answers?.[question.options.question] === option" />
                                 <span>{{ option }}</span>
-
                             </div>
                         </div>
-                        <div class="error" v-if="isError">{{ errorText }}</div>
+                        <div class="error" v-if="isError && question.options.isRequired">{{ errorText }}</div>
                     </template>
 
                     <template v-else-if="question.options.type === 'select' && question.options.isMultiSelect">
@@ -46,6 +45,7 @@
                                 v-model="checkboxAnswer" :value="option" :name="`option-${index}`" />
                             <span>{{ option }}</span>
                         </div>
+                        <div class="error" v-if="isError && question.options.isRequired">{{ errorText }}</div>
                     </template>
                 </label>
             </div>
@@ -131,8 +131,17 @@ const validateForm = (): boolean => {
     let hasError = false;
 
     currentForm.value.fields.forEach((field) => {
-        if (field.options.isRequired && (!field.options.answer || field.options.answer.trim() === '')) {
-            hasError = true;
+        if (field.options.isRequired) {
+            const answer = field.options.answer;
+            if (Array.isArray(answer)) {
+                if (answer.length === 0) {
+                    hasError = true;
+                }
+            } else {
+                if (!answer || answer.trim() === '') {
+                    hasError = true;
+                }
+            }
         }
     });
 
@@ -152,6 +161,11 @@ const submitForm = () => {
         }, 2500)
         return
     }
+    Object.entries(answer.value).forEach(([key, value]) => {
+        if (answer.value[key] === '') {
+            delete answer.value[key]
+        }
+    })
     formStore.addAnswersToForm(route.params.id as string, answer.value)
     popupText.value = 'Форма успешно отправлена'
     showPopup.value = true

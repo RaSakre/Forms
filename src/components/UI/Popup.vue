@@ -31,7 +31,7 @@
     top: 20px;
     right: 20px;
     z-index: 1000;
-    background: white;
+    background: var(--bg-color);
     border-radius: 12px;
     padding: 16px 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -75,7 +75,7 @@
   }
 
   .popup-text {
-    color: #1f2937;
+    color: var(--text-color);
     font-weight: 500;
     font-size: 14px;
   }

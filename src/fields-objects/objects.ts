@@ -11,6 +11,7 @@ export class OneRow implements IField {
         question: '',
         type: 'text',
         icon: 'pencil',
+        iconColor: 'var(--text-color)',
     }
 }
 
@@ -23,6 +24,7 @@ export class MultiRow implements IField {
         question: '',
         type: 'text',
         icon: 'align-left',
+        iconColor: 'var(--text-color)',
     }
 }
 
@@ -36,6 +38,8 @@ export class Radio implements IField {
         options: [''],
         isMultiSelect: false,
         icon: 'check-circle',
+        iconColor: 'var(--text-color)',
+        
     }
 }
 
@@ -48,7 +52,8 @@ export class Checkbox implements IField {
         type: 'select',
         options: [''],
         isMultiSelect: true,
-        icon: 'plus-circle',
+        icon: 'list-check',
+        iconColor: 'var(--text-color)',
     }
 }
 

@@ -48,6 +48,7 @@ export interface QuestionBase {
   isRequired: boolean;
   answer?: string | string[];
   icon: string;
+  iconColor: string;
 }
 
 export interface QuestionText extends QuestionBase {
