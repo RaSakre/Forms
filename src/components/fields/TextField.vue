@@ -55,14 +55,6 @@ const deleteQuestion = (id: string): void => {
     props.state.fields = props.state.fields.filter((question) => question.options.id !== id)
 }
 
-// const field = defineModel<QuestionText>({required: true, default: () => ({
-//     id: '',
-//     type: 'text',
-//     question: '',
-//     image: '',
-//     isRequired: false,
-//     isOneRow: false,
-// })})
 </script>
 <style >
 .form-item-lower {

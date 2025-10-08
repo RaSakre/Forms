@@ -6,8 +6,8 @@ export interface IForm {
   description: string;
   fields: IField[];
   userId: string | undefined;
-  createdAt?: FieldValue | number;
-  updatedAt?: FieldValue | number;
+  createdAt?: number;
+  updatedAt?: number;
   answers?: Record<string, string | string[]>;
 }
 

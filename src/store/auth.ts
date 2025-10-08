@@ -36,7 +36,8 @@ export const useAuthStore = defineStore("user", () => {
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       userState.value = user;
-      localStorage.setItem("token", user.accessToken);
+      const token = await user.getIdToken();
+      localStorage.setItem("token", token);
       const unsubscribe = onSnapshot(doc(db, "users", user.uid), (doc) => {
         if (doc.exists()) {
           userData.value = doc.data();

@@ -8,7 +8,7 @@
     </FormField>
     <div class="data-wrapper">
       <div class="data">
-        <Icon :name="'at'" style="color: var(--textcolor);"/>
+        <Icon :name="'at'" style="color: var(--textcolor);" />
         <span>{{ email }}</span>
       </div>
       <div class="data">
@@ -16,13 +16,14 @@
         <span>Количество созданных форм {{ formsStore.forms.length }}</span>
       </div>
       <div class="data">
-        <Icon :name="'calendar'" style="color: var(--textcolor);"/>
+        <Icon :name="'calendar'" style="color: var(--textcolor);" />
         <span>Дата регистрации: {{ date }}</span>
       </div>
     </div>
-    <Button @click.prevent="emit('editMode')" style="width: 100%;" :variant="'red'" :text="'Отменить изменения'" :img="deleteIcon"/>
+    <Button @click.prevent="emit('editMode')" style="width: 100%;" :variant="'red'" :text="'Отменить изменения'"
+      :img="deleteIcon" />
     <button type="submit" class="profile-edit">
-      <img  :src="isEditing ?  confirmEdit : ''" alt="" >
+      <img :src="isEditing ? confirmEdit : ''" alt="">
     </button>
   </Form>
 </template>
@@ -49,6 +50,7 @@ import { useFormsStore } from '@/store/forms'
 import userIcon from '@/assets/auth/user.svg'
 import confirmEdit from '@/assets/edit-checkmark.svg'
 import deleteIcon from '@/assets/delete.svg'
+import Button from './UI/Button.vue'
 const formsStore = useFormsStore()
 const emit = defineEmits(['submitChanges', 'editMode', 'confirmChanges'])
 

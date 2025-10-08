@@ -16,14 +16,13 @@
                             addAnswer(value, question);
                         }" v-model="question.options.answer" :key="question.options.id" :variant="'gray'" type="text"
                             :placeholder="formStore.forms.find(form => form.id === currentForm?.id)?.answers?.[question.options.question]" />
-                        <span  v-if="isError && question.options.isRequired" class="error">{{ errorText }}</span>
+                        <span v-if="isError && question.options.isRequired" class="error">{{ errorText }}</span>
                     </template>
 
                     <template v-else-if="question.options.type === 'text' && !question.options.isOneRow">
-                        <textarea @input="addAnswer($event.target?.value, question)" v-model="question.options.answer"
-                            :placeholder="formStore.forms.find(form => form.id === currentForm?.id)?.answers?.[question.options.question]"
-                            class="form-textarea" rows="3"></textarea>
-                        <span  v-if="isError && question.options.isRequired" class="error">{{ errorText }}</span>
+                        <textarea @input="handleTextareaInput($event, question)" v-model="question.options.answer"
+                            :placeholder="getPlaceholder(question)" class="form-textarea" rows="3"></textarea>
+                        <span v-if="isError && question.options.isRequired" class="error">{{ errorText }}</span>
                     </template>
 
                     <template v-else-if="question.options.type === 'select' && !question.options.isMultiSelect">
@@ -75,6 +74,7 @@ import { useRoute } from 'vue-router'
 import Radio from '@/components/UI/Radio.vue'
 import Checkbox from '@/components/UI/Checkbox.vue'
 import Popup from '@/components/UI/Popup.vue'
+import Button from '@/components/UI/Button.vue'
 import type { IField } from '@/types/formTypes'
 
 onMounted(() => {
@@ -191,6 +191,16 @@ const onSubmit = (): void => {
         }, 2500)
     }
 }
+
+const handleTextareaInput = (event: Event, question: any) => {
+    const target = event.target as HTMLTextAreaElement;
+    addAnswer(target.value, question);
+};
+
+const getPlaceholder = (question: any): string => {
+    const answers = formStore.forms.find(form => form.id === currentForm.value?.id)?.answers?.[question.options.question];
+    return Array.isArray(answers) ? answers.join(', ') : (answers || '');
+};
 </script>
 <style scoped>
 .form-wrapper {

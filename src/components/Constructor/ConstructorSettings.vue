@@ -52,12 +52,6 @@
 <script setup lang="ts">
 import Button from '../UI/Button.vue';
 import { OneRow, MultiRow, Radio, Checkbox } from '@/fields-objects/objects';
-import saveIcon from '@/assets/constructor/constructor-save.svg';
-import lines from '@/assets/constructor/constructor-lines.svg';
-import pencil from '@/assets/constructor/constructor-pen.svg';
-import singleSelect from '@/assets/constructor/constructor-check.svg';
-import multiSelect from '@/assets/constructor/constructor-plus.svg';
-import deleteFormIcon from '@/assets/index-thrash.svg';
 import type { IField } from '@/types/formTypes';
 import { useAuthStore } from '@/store/auth';
 

@@ -34,6 +34,7 @@ import { useAuthStore } from '@/store/auth';
 import { ref } from 'vue';
 import emailIcon from '@/assets/auth/email.svg'
 import { Validators } from '@/utils/validator';
+import Button from '../UI/Button.vue';
 
 const authStore = useAuthStore()
 let popupText = ref<string>('')

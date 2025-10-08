@@ -51,6 +51,7 @@ import { Validators } from '../../utils/validator';
 import { useRouter } from 'vue-router';
 import type { IRegisterModel } from '@/types/formTypes';
 import type { FirebaseError } from 'firebase/app';
+import Button from '../UI/Button.vue';
 
 const router = useRouter()
 
